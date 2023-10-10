@@ -4,7 +4,7 @@
 
 | Name            | Email                |
 | --------------- | -------------------- |
-| Ilina Kirovska  | up20230XXXX@fe.up.pt |
+| Ilina Kirovska  | up202301450@fe.up.pt |
 | Goncalo Almeida | up202308629@fe.up.pt |
 | Žan Žlender     | up202302230@fe.up.pt |
 
