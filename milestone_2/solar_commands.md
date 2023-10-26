@@ -4,6 +4,10 @@
 
 Download docker image
 
+```bash
+docker pull solr
+```
+
 Run docker image, expose port 9893 and create the universities core.
 
 ```bash
