@@ -1,0 +1,203 @@
+{
+  "add-field-type": [
+    {
+      "name": "courseTitle",
+      "class": "solr.TextField",
+      "indexAnalyzer": {
+        "tokenizer": {
+          "class": "solr.StandardTokenizerFactory"
+        },
+        "filters": [
+          { "class": "solr.ASCIIFoldingFilterFactory", "preserveOriginal": true },
+
+          { "class": "solr.LowerCaseFilterFactory" },
+
+          {
+            "class": "solr.PatternReplaceCharFilterFactory",
+            "replacement": "$1$1",
+            "pattern": "([0-9\\p{Sc}\\p{So}\\p{Mn}\\p{P}\\p{Z}À-ÿ\\w])\\\\1+"
+          }
+        ]
+      },
+      "queryAnalyzer": {
+        "tokenizer": {
+          "class": "solr.StandardTokenizerFactory"
+        },
+
+        "filters": [
+          { "class": "solr.ASCIIFoldingFilterFactory", "preserveOriginal": true },
+
+          { "class": "solr.LowerCaseFilterFactory" }
+        ]
+      }
+    }
+  ],
+
+  "add-field": [
+    {
+      "name": "2024_rank",
+      "type": "courseTitle",
+      "indexed": true
+    },
+    {
+      "name": "2023_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "institution_name_-_wrong",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "institution_name",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "country_code",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "country",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "size",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "focus",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "res.",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "age",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "status",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "academic_reputation_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "academic_reputation_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "employer_reputation_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "employer_reputation_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "faculty_student_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "faculty_student_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "citations_per_faculty_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "citations_per_faculty_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "international_faculty_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "international_faculty_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "international_students_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "international_students_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "international_research_network_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "international_research_network_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "employment_outcomes_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "employment_outcomes_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "sustainability_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "sustainability_rank",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "overall_score",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "wikidata",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "wikipedia_text",
+      "type": "courseTitle",
+      "indexed": false
+    },
+    {
+      "name": "city_wikipedia_text",
+      "type": "courseTitle",
+      "indexed": false
+    }
+  ]
+}
