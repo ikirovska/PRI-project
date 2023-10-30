@@ -2,6 +2,8 @@
 
 ## 1st time
 
+> **NOTICE** - the following commands work for Linux, Ubuntu 20.04 (WSL)
+
 Download docker image
 
 ```bash
