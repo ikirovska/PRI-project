@@ -1,48 +1,62 @@
 #!/bin/bash
 
-open -a Docker
+printf "Running solr startup script ~\n\n"
 
-docker pull solr
+printf ">>> Checking if docker daemon is running...\n\n"
 
-docker run -p 8983:8983 --name solr -d solr solr-precreate universities
+if (! docker stats --no-stream &> /dev/null); then
+    printf "Docker daemon is not running, please start the Docker daemon.\n\n"
+    #Wait until Docker daemon is running and has completed initialisation
+while (! docker stats --no-stream &> /dev/null); do
+    # Docker takes a few seconds to initialize
+    echo "Waiting for Docker to launch..."
+    sleep 1 && echo "." && sleep 1 && echo "." && sleep 1 && echo "." && sleep 2
+done
+fi
+
+sleep 2
+
+# check if solr image exists if not pull it
+if [[ "$(docker images -q solr:9.3)" == "" ]]; then
+  printf ">>> Image solr:9.3 doesn't exist, pulling image...\n"
+  docker pull solr:9.3
+fi
+
+
+# check if solr container already exists, if yet delete it
+if [[ "$(docker ps --all -q --filter name=solr)" != "" ]]; then
+    sleep 1
+    printf "\n>>> Deleting existing solr container and volume...\n"
+    docker rm -v -f solr 
+fi
+
+sleep 2
+printf "\n>>> Starting docker container...\n"
+sleep 2
+
+docker run -p 8983:8983 -v /data --name solr -d solr:9.3 solr-precreate universities
 
 until $(curl --output /dev/null --silent --head --fail http://localhost:8983/solr); do
-    echo "Waiting for Solr to start..."
+    printf "\n>>> Waiting for Solr to start...\n"
     sleep 5
 done
 
-check_field_type() {
-    field_type_name="$1"
-    response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8983/solr/universities/schema/fieldtypes/$field_type_name)
-    if [ "$response" = "200" ]; then
-        echo "Field type '$field_type_name' already exists."
-        return 0  # Field type exists
-    else
-        return 1  # Field type does not exist
-    fi
-}
+printf "\n>>> Uploading schema...\n\n"
 
-check_field_name() {
-    field_name="$1"
-    response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8983/solr/universities/schema/fields/$field_name)
-    if [ "$response" = "200" ]; then
-        echo "Field '$field_name' already exists."
-        return 0  # Field name exists
-    else
-        return 1  # Field name does not exist
-    fi
-}
+curl -X POST -H 'Content-type:application/json' \
+--data-binary "@uni_schema.json" \
+http://localhost:8983/solr/universities/schema
 
-cd milestone_2
+printf "\n>>> Uploading documents...\n\n"
 
-# We need to change this field_type for the final submission
-if check_field_type "courseTitle"; then
-    echo "Skipping adding field type 'courseTitle'."
-else
-    curl -X POST -H 'Content-type:application/json' --data-binary "@uni_schema.json" http://localhost:8983/solr/universities/schema
-fi
+curl -X POST -H 'Content-type:application/json' \
+--data-binary "@../milestone_1/datasets/07_University_documents.json" \
+http://localhost:8983/solr/universities/update?commit=true
 
-cd ../milestone_1
-curl -X POST -H 'Content-type:application/json' --data-binary "@datasets/05_University_documents.json" http://localhost:8983/solr/universities/update?commit=true
+printf "\n\nSolr setup and data population completed.\n\n"
+printf "Open http://localhost:8983/solr in your browser.\n\n"
+printf "This window will automatically close in 10 seconds."
 
-echo "Solr setup and data population completed."
+sleep 10
+
+
