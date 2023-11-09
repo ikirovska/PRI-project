@@ -28,7 +28,7 @@ Position into `milestone_1/` folder and upload the universities JSON to the SOLR
 
 ```bash
 curl -X POST -H 'Content-type:application/json' \
---data-binary "@datasets/07_University_documents.json" \
+--data-binary "@datasets/06_University_documents.json" \
 http://localhost:8983/solr/universities/update\?commit\=true
 ```
 

@@ -50,7 +50,7 @@ http://localhost:8983/solr/universities/schema
 printf "\n>>> Uploading documents...\n\n"
 
 curl -X POST -H 'Content-type:application/json' \
---data-binary "@../milestone_1/datasets/07_University_documents.json" \
+--data-binary "@../milestone_1/datasets/06_University_documents.json" \
 http://localhost:8983/solr/universities/update?commit=true
 
 printf "\n\nSolr setup and data population completed.\n\n"
