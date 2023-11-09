@@ -30,3 +30,8 @@ Once done you can view it on [http://localhost:8983](http://localhost:8983).
 - Add more information about universities (faculties etc.)
 - ~~Add n-grams~~ - DONE - Wordclouds for unigrams, bigrams, trigrams and fourgrams are available
 - Do NER analysis
+
+### Ideas for the search engine
+- match 100 and hundred (research Synonym Graph Filter define our own synonyms text file)
+- do we need phonetic matching? Wildcards in 05-tutorial
+- Stop Filter?
