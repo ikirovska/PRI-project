@@ -58,5 +58,3 @@ printf "Open http://localhost:8983/solr in your browser.\n\n"
 printf "This window will automatically close in 10 seconds.\n\n"
 
 sleep 10
-
-
