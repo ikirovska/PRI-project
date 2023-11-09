@@ -38,6 +38,8 @@ http://localhost:8983/solr/universities/update\?commit\=true
 
 Position into folder `milestone_2` and execute the `startup.sh` script. With Bash installed the command is just `./startup.sh`.
 
+If you are running the command on Linux/WSL first execute this command `sed -i -e 's/\r$//' startup.sh` to remove CL/RF formating.
+
 This will guide you to running Solr.
 
 Once done you can view it on [http://localhost:8983](http://localhost:8983).
