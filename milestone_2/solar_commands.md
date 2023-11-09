@@ -7,13 +7,13 @@
 Download docker image
 
 ```bash
-docker pull solr
+docker pull solr:9.3
 ```
 
 Run docker image, expose port 9893 and create the universities core.
 
 ```bash
-docker run -p 8983:8983 --name solr -v ${PWD}:/data -d solr:9.3 solr-precreate universities
+docker run -p 8983:8983 --name solr -v /data -d solr:9.3 solr-precreate universities
 ```
 
 Position into `milestone_2/` folder and add the schema to the SOLR core.
@@ -24,7 +24,7 @@ curl -X POST -H 'Content-type:application/json' \
 http://localhost:8983/solr/universities/schema
 ```
 
-Position into `milestone_1` folder and upload the universities JSON to the SOLR core.
+Position into `milestone_1/` folder and upload the universities JSON to the SOLR core.
 
 ```bash
 curl -X POST -H 'Content-type:application/json' \
