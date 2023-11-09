@@ -1,6 +1,6 @@
 # How to run SOLR
 
-## 1st time
+## Running by yourself
 
 > **NOTICE** - the following commands work for Linux, Ubuntu 20.04 (WSL)
 
@@ -34,4 +34,10 @@ http://localhost:8983/solr/universities/update\?commit\=true
 
 ## From finished template
 
-Run docker file..... TBD
+> **NOTICE** - this script was tested on Windows 10 and WSL (Ubuntu 20.04)
+
+Position into folder `milestone_2` and execute the `startup.sh` script. With Bash installed the command is just `./startup.sh`.
+
+This will guide you to running Solr.
+
+Once done you can view it on [http://localhost:8983](http://localhost:8983).
