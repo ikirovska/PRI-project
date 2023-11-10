@@ -67,11 +67,6 @@
       "indexed": true
     },
     {
-      "name": "res.",
-      "type": "courseTitle",
-      "indexed": true
-    },
-    {
       "name": "age",
       "type": "courseTitle",
       "indexed": true
@@ -122,16 +117,6 @@
       "indexed": true
     },
     {
-      "name": "international_faculty_score",
-      "type": "courseTitle",
-      "indexed": true
-    },
-    {
-      "name": "international_faculty_rank",
-      "type": "courseTitle",
-      "indexed": true
-    },
-    {
       "name": "international_students_score",
       "type": "courseTitle",
       "indexed": true
@@ -158,16 +143,6 @@
     },
     {
       "name": "employment_outcomes_rank",
-      "type": "courseTitle",
-      "indexed": true
-    },
-    {
-      "name": "sustainability_score",
-      "type": "courseTitle",
-      "indexed": true
-    },
-    {
-      "name": "sustainability_rank",
       "type": "courseTitle",
       "indexed": true
     },
