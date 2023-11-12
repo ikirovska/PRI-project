@@ -39,7 +39,7 @@
     {
       "name": "institution_name_-_wrong",
       "type": "courseTitle",
-      "indexed": true
+      "indexed": false
     },
     {
       "name": "institution_name",
@@ -154,7 +154,7 @@
     {
       "name": "wikidata",
       "type": "courseTitle",
-      "indexed": true
+      "indexed": false
     },
     {
       "name": "wikipedia_text",

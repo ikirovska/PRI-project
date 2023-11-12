@@ -64,6 +64,7 @@
             },
             "filters":[
                 {"class":"solr.ASCIIFoldingFilterFactory", "preserveOriginal":true},
+
                 {"class":"solr.LowerCaseFilterFactory"}
             ]
           }
@@ -84,7 +85,7 @@
       {
         "name": "institution_name_-_wrong",
         "type": "text",
-        "indexed": true
+        "indexed": false
       },
       {
         "name": "institution_name",
@@ -199,7 +200,7 @@
       {
         "name": "wikidata",
         "type": "text",
-        "indexed": true
+        "indexed": false
       },
       {
         "name": "wikipedia_text",
