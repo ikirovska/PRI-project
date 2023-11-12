@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600">
+<style>@font-face{font-family:'Droid Sans Mono';font-weight:normal;font-style:normal;src:url("data:application/font-woff;charset=utf-8;base64,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")format("woff");}</style>
+<style>text{font-family:'Droid Sans Mono';font-weight:normal;font-style:normal;}</style>
+<rect width="100%" height="100%" style="fill:white"></rect>
+<text transform="translate(35,372)" font-size="80" style="fill:rgb(72, 23, 105)">the university</text>
+<text transform="translate(191,466)" font-size="61" style="fill:rgb(31, 154, 138)">university of</text>
+<text transform="translate(775,415) rotate(-90)" font-size="53" style="fill:rgb(32, 146, 140)">faculty of</text>
+<text transform="translate(551,74)" font-size="43" style="fill:rgb(32, 164, 134)">school of</text>
+<text transform="translate(17,105)" font-size="40" style="fill:rgb(32, 146, 140)">the faculty</text>
+<text transform="translate(215,407)" font-size="40" style="fill:rgb(186, 222, 40)">university in</text>
+<text transform="translate(40,563)" font-size="37" style="fill:rgb(47, 107, 142)">department of</text>
+<text transform="translate(3,66)" font-size="34" style="fill:rgb(68, 191, 112)">institute of</text>
+<text transform="translate(365,226) rotate(-90)" font-size="33" style="fill:rgb(72, 38, 119)">the first</text>
+<text transform="translate(383,263)" font-size="30" style="fill:rgb(181, 222, 43)">science and</text>
+<text transform="translate(598,314)" font-size="29" style="fill:rgb(137, 213, 72)">one of</text>
+<text transform="translate(507,509)" font-size="28" style="fill:rgb(92, 200, 99)">higher education</text>
+<text transform="translate(409,212)" font-size="27" style="fill:rgb(64, 69, 136)">it wa</text>
+<text transform="translate(444,171)" font-size="27" style="fill:rgb(56, 89, 140)">the world</text>
+<text transform="translate(65,161)" font-size="27" style="fill:rgb(70, 11, 94)">the school</text>
+<text transform="translate(52,290)" font-size="26" style="fill:rgb(70, 7, 90)">member of</text>
+<text transform="translate(502,194)" font-size="26" style="fill:rgb(43, 116, 142)">university wa</text>
+<text transform="translate(479,238)" font-size="26" style="fill:rgb(31, 153, 138)">number of</text>
+<text transform="translate(296,244) rotate(-90)" font-size="26" style="fill:rgb(44, 177, 126)">a well</text>
+<text transform="translate(430,290)" font-size="26" style="fill:rgb(58, 84, 140)">the city</text>
+<text transform="translate(342,28)" font-size="26" style="fill:rgb(216, 226, 25)">part of</text>
+<text transform="translate(5,231)" font-size="26" style="fill:rgb(31, 148, 140)">established in</text>
+<text transform="translate(490,106) rotate(-90)" font-size="26" style="fill:rgb(31, 161, 135)">well a</text>
+<text transform="translate(333,551)" font-size="26" style="fill:rgb(66, 65, 134)">university and</text>
+<text transform="translate(512,111)" font-size="26" style="fill:rgb(53, 94, 141)">university is</text>
+<text transform="translate(79,190)" font-size="26" style="fill:rgb(38, 129, 142)">the student</text>
+<text transform="translate(579,596)" font-size="26" style="fill:rgb(244, 230, 30)">of science</text>
+<text transform="translate(92,527)" font-size="25" style="fill:rgb(70, 8, 92)">social science</text>
+<text transform="translate(34,596)" font-size="25" style="fill:rgb(99, 203, 95)">centre for</text>
+<text transform="translate(192,300)" font-size="25" style="fill:rgb(53, 95, 141)">professor of</text>
+<text transform="translate(646,532)" font-size="25" style="fill:rgb(168, 219, 52)">founded in</text>
+<text transform="translate(463,142)" font-size="25" style="fill:rgb(46, 111, 142)">university ranking</text>
+<text transform="translate(550,20)" font-size="25" style="fill:rgb(41, 122, 142)">world university</text>
+<text transform="translate(249,595)" font-size="25" style="fill:rgb(246, 230, 32)">minister of</text>
+<text transform="translate(666,572)" font-size="25" style="fill:rgb(72, 31, 112)">the main</text>
+<text transform="translate(106,31)" font-size="25" style="fill:rgb(53, 183, 121)">university ha</text>
+<text transform="translate(368,69)" font-size="25" style="fill:rgb(45, 178, 125)">of law</text>
+<text transform="translate(40,486)" font-size="24" style="fill:rgb(58, 84, 140)">college of</text>
+<text transform="translate(27,256)" font-size="24" style="fill:rgb(208, 225, 28)">the institute</text>
+<text transform="translate(8,451)" font-size="24" style="fill:rgb(72, 40, 120)">located in</text>
+<text transform="translate(326,521)" font-size="24" style="fill:rgb(56, 89, 140)">the college</text>
+<text transform="translate(331,151) rotate(-90)" font-size="24" style="fill:rgb(50, 100, 142)">the campus</text>
+<text transform="translate(151,425)" font-size="24" style="fill:rgb(57, 86, 140)">ha been</text>
+<text transform="translate(197,485)" font-size="24" style="fill:rgb(246, 230, 32)">president of</text>
+<text transform="translate(140,137)" font-size="24" style="fill:rgb(88, 199, 101)">student and</text>
+<text transform="translate(125,326)" font-size="24" style="fill:rgb(36, 134, 142)">wa founded</text>
+<text transform="translate(372,319)" font-size="24" style="fill:rgb(71, 47, 125)">the department</text>
+<text transform="translate(1,392)" font-size="24" style="fill:rgb(31, 162, 135)">engineering and</text>
+<text transform="translate(546,409)" font-size="24" style="fill:rgb(65, 66, 135)">of technology</text>
+<text transform="translate(635,280)" font-size="24" style="fill:rgb(101, 203, 94)">of art</text>
+<text transform="translate(537,38)" font-size="24" style="fill:rgb(69, 55, 129)">student union</text>
+<text transform="translate(683,470)" font-size="24" style="fill:rgb(72, 38, 119)">the uk</text>
+<text transform="translate(200,274)" font-size="22" style="fill:rgb(31, 148, 140)">university the</text>
+<text transform="translate(736,374) rotate(-90)" font-size="22" style="fill:rgb(63, 71, 136)">the new</text>
+<text transform="translate(4,417)" font-size="22" style="fill:rgb(70, 7, 90)">and college</text>
+<text transform="translate(654,175)" font-size="22" style="fill:rgb(62, 74, 137)">of medicine</text>
+<text transform="translate(81,208)" font-size="22" style="fill:rgb(72, 20, 103)">institute for</text>
+<text transform="translate(646,228)" font-size="22" style="fill:rgb(115, 208, 86)">list of</text>
+<text transform="translate(793,451) rotate(-90)" font-size="22" style="fill:rgb(33, 165, 133)">computer science</text>
+<text transform="translate(430,580)" font-size="22" style="fill:rgb(45, 113, 142)">of education</text>
+<text transform="translate(571,550)" font-size="22" style="fill:rgb(40, 174, 128)">of economics</text>
+<text transform="translate(30,37)" font-size="22" style="fill:rgb(30, 156, 137)">a new</text>
+<text transform="translate(366,127)" font-size="22" style="fill:rgb(50, 182, 122)">wa the</text>
+<text transform="translate(417,598)" font-size="22" style="fill:rgb(72, 29, 111)">research and</text>
+<text transform="translate(588,486)" font-size="21" style="fill:rgb(35, 136, 142)">establishment in</text>
+<text transform="translate(22,309)" font-size="21" style="fill:rgb(74, 193, 109)">within the</text>
+<text transform="translate(323,501)" font-size="21" style="fill:rgb(71, 19, 101)">and research</text>
+<text transform="translate(507,216)" font-size="21" style="fill:rgb(72, 27, 109)">and social</text>
+<text transform="translate(678,447)" font-size="21" style="fill:rgb(103, 204, 92)">art and</text>
+<text transform="translate(580,253)" font-size="20" style="fill:rgb(101, 203, 94)">of university</text>
+<text transform="translate(541,89)" font-size="20" style="fill:rgb(47, 108, 142)">wa established</text>
+<text transform="translate(273,251) rotate(-90)" font-size="20" style="fill:rgb(33, 165, 133)">a number</text>
+<text transform="translate(22,597) rotate(-90)" font-size="20" style="fill:rgb(155, 217, 60)">the building</text>
+<text transform="translate(288,422)" font-size="17" style="fill:rgb(69, 55, 129)">and technology</text>
+<text transform="translate(381,44)" font-size="17" style="fill:rgb(71, 19, 101)">of student</text>
+<text transform="translate(371,184)" font-size="17" style="fill:rgb(80, 196, 106)">according to</text>
+<text transform="translate(384,234)" font-size="17" style="fill:rgb(30, 156, 137)">the top</text>
+<text transform="translate(7,120)" font-size="17" style="fill:rgb(50, 100, 142)">education and</text>
+<text transform="translate(37,464)" font-size="17" style="fill:rgb(63, 72, 137)">economics and</text>
+<text transform="translate(714,92)" font-size="17" style="fill:rgb(53, 94, 141)">field of</text>
+<text transform="translate(367,94)" font-size="17" style="fill:rgb(72, 41, 121)">college in</text>
+<text transform="translate(35,511)" font-size="17" style="fill:rgb(47, 108, 142)">is located</text>
+<text transform="translate(582,489) rotate(-90)" font-size="17" style="fill:rgb(68, 57, 131)">campus in</text>
+<text transform="translate(5,133)" font-size="17" style="fill:rgb(31, 161, 135)">a university</text>
+<text transform="translate(216,501)" font-size="17" style="fill:rgb(90, 200, 100)">opened in</text>
+<text transform="translate(327,162)" font-size="17" style="fill:rgb(57, 85, 140)">nobel prize</text>
+<text transform="translate(533,387)" font-size="17" style="fill:rgb(33, 145, 140)">the national</text>
+<text transform="translate(430,481)" font-size="17" style="fill:rgb(66, 65, 134)">known a</text>
+<text transform="translate(14,371) rotate(-90)" font-size="17" style="fill:rgb(49, 104, 142)">of engineering</text>
+<text transform="translate(508,121) rotate(-90)" font-size="17" style="fill:rgb(72, 23, 105)">the european</text>
+<text transform="translate(7,14)" font-size="17" style="fill:rgb(74, 193, 109)">external link</text>
+<text transform="translate(369,142)" font-size="17" style="fill:rgb(108, 205, 90)">among the</text>
+<text transform="translate(84,541)" font-size="17" style="fill:rgb(62, 74, 137)">is also</text>
+<text transform="translate(38,431)" font-size="17" style="fill:rgb(46, 109, 142)">the time</text>
+<text transform="translate(495,529)" font-size="17" style="fill:rgb(244, 230, 30)">business school</text>
+<text transform="translate(317,567)" font-size="17" style="fill:rgb(38, 173, 129)">time higher</text>
+<text transform="translate(312,129) rotate(-90)" font-size="17" style="fill:rgb(251, 231, 35)">the largest</text>
+<text transform="translate(592,566)" font-size="17" style="fill:rgb(139, 214, 70)">law and</text>
+<text transform="translate(155,577)" font-size="17" style="fill:rgb(31, 153, 138)">in europe</text>
+<text transform="translate(30,265)" font-size="12" style="fill:rgb(48, 105, 142)">categoryuniversities and</text>
+</svg>
