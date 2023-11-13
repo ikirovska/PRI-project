@@ -211,6 +211,11 @@
         "name": "city_wikipedia_text",
         "type": "wikipediaText",
         "indexed": true
+      },   
+      {
+        "name": "coordinates",
+        "type": "text",
+        "indexed": true
       }
     ]
   }

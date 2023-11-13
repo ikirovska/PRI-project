@@ -1,7 +1,7 @@
 {
   "add-field-type": [
     {
-      "name": "courseTitle",
+      "name": "text",
       "class": "solr.TextField",
       "indexAnalyzer": {
         "tokenizer": {
@@ -28,142 +28,147 @@
   "add-field": [
     {
       "name": "2024_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "2023_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "institution_name_-_wrong",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": false
     },
     {
       "name": "institution_name",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "country_code",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "country",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "size",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "focus",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "age",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "status",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "academic_reputation_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "academic_reputation_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "employer_reputation_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "employer_reputation_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "faculty_student_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "faculty_student_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "citations_per_faculty_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "citations_per_faculty_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "international_students_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "international_students_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "international_research_network_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "international_research_network_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "employment_outcomes_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "employment_outcomes_rank",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "overall_score",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "wikidata",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": false
     },
     {
       "name": "wikipedia_text",
-      "type": "courseTitle",
+      "type": "text",
       "indexed": true
     },
     {
       "name": "city_wikipedia_text",
-      "type": "courseTitle",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "coordinates",
+      "type": "text",
       "indexed": true
     }
   ]
