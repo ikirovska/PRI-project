@@ -9,6 +9,11 @@
             "class": "solr.FloatPointField"
         },
         {
+            "name": "coordinates",
+            "class": "solr.LatLonPointSpatialField",
+            "docValues": "true"
+        },
+        {
         "name": "wikipediaText",
         "class": "solr.TextField",
         "indexAnalyzer": {
@@ -214,7 +219,7 @@
       },   
       {
         "name": "coordinates",
-        "type": "text",
+        "type": "coordinates",
         "indexed": true
       }
     ]

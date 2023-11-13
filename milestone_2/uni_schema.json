@@ -22,6 +22,11 @@
           { "class": "solr.LowerCaseFilterFactory" }
         ]
       }
+    },
+    {
+      "name": "coordinates",
+      "class": "solr.LatLonPointSpatialField",
+      "docValues": "true"
     }
   ],
 
@@ -168,7 +173,7 @@
     },
     {
       "name": "coordinates",
-      "type": "text",
+      "type": "coordinates",
       "indexed": true
     }
   ]
