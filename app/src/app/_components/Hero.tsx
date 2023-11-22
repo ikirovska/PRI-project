@@ -101,7 +101,7 @@ const Hero = () => {
         {(searchMutation.isSuccess ||
           searchMutation.isError ||
           searchMutation.isLoading) && (
-          <div className="min-h-60 w-full rounded border border-gray-400 bg-gray-700/70 p-4">
+          <div className="min-h-[300px] w-full rounded border border-gray-400 bg-gray-700/70 p-4">
             {errorMessage && (
               <div className="mx-auto w-full max-w-md">
                 <ErrorMessage
