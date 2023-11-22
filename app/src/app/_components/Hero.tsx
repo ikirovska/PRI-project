@@ -14,13 +14,13 @@ const Hero = () => {
 
   return (
     <>
-      <div className="absolute left-0 top-0 z-0 h-screen w-full">
+      <div className="absolute left-0 top-0 z-0 h-screen w-full object-cover">
         <Image
-          className="z-0"
+          className="z-0 object-cover"
           fill={true}
           src={"/hero-bg.jpg"}
           alt="University building"
-          objectFit="cover"
+          priority={true}
         />
         <div className="absolute left-0 top-0 z-10 h-full w-full bg-black/75"></div>
       </div>
