@@ -1,28 +1,27 @@
-# Create T3 App
+# University search engine
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This search engine was create as part of the Information Processing and Retrieval class (Processamento e Recuperação de Informação) at the Faculty of Engineering, University of Porto (FEUP - Faculdade de Engenharia da Universidade do Porto).
 
-## What's next? How do I make an app with this?
+## How to run
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+It is necessary to complete all steps defined in [Run the app](#run-the-app) and [Run the necessary processes](#run-the-necessary-services).
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### Run the app
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- Install NodeJS LTS (20.9.0 or higher)
+- Install [pnpm](https://pnpm.io/) by running `npm i -g pnpm` in the terminal
+- Position into the `app/` directory
+- In the terminal run `pnpm i` to install all dependancies
+- In the terminal run `pnpm run dev` in development mode
+  - Alternatively for the full website experience run `pnpm run build`, after it's finished run `pnpm start`
+- Open `localhost:3000`, or whichever url was provided in the terminal, in your browser to view the app
 
-## Learn More
+### Run the necessary services
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- Install Docker
+- Position yourself into the `milestone_2/` folder
+- Run `startup.sh` script
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## Usage
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+The easies way to start using the app is to open it and start searching as if you were usinge the Google search engine.

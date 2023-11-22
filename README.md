@@ -24,14 +24,6 @@ This will guide you to running Solr.
 
 Once done you can view it on [http://localhost:8983](http://localhost:8983).
 
-## M1 Feedback
+### Milestone 3
 
-- Change search tasks so they are more suitable for a full-text search (more like questions instead of pure X in Y)
-- Add more information about universities (faculties etc.)
-- ~~Add n-grams~~ - DONE - Wordclouds for unigrams, bigrams, trigrams and fourgrams are available
-- Do NER analysis
-
-### Ideas for the search engine
-- match 100 and hundred (research Synonym Graph Filter define our own synonyms text file)
-- do we need phonetic matching? Wildcards in 05-tutorial
-- Stop Filter?
+Follow the steps defined in [Milestone 2](#milestone-2) and then follow the steps as described in `app/README.md`.
