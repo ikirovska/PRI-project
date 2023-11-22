@@ -2,14 +2,39 @@
 
 import React, { type FormEvent, useState } from "react";
 import Image from "next/image";
+import { api } from "~/trpc/react";
+import ErrorMessage from "./ErrorMessage";
 
 const Hero = () => {
   const [input, setInput] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>();
+
+  const searchMutation = api.universities.testSolr.useMutation({
+    onError: (err) => {
+      switch (err.message) {
+        case "SOLR_NOT_RUNNING": {
+          setErrorMessage("Solr is not running.");
+          break;
+        }
+        case "INCORRECT_QUERY": {
+          setErrorMessage("Cannot execute this query.");
+          break;
+        }
+        default: {
+          setErrorMessage("Unexpected error happened. Please try again.");
+          break;
+        }
+      }
+    },
+    onSuccess: (data) => {
+      console.log("SUCCESS: ", data);
+      setErrorMessage(undefined);
+    },
+  });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
-    console.log("SUBMITTING");
+    searchMutation.mutate({ input: input });
   };
 
   return (
@@ -25,7 +50,7 @@ const Hero = () => {
         <div className="absolute left-0 top-0 z-10 h-full w-full bg-black/75"></div>
       </div>
 
-      <div className="container z-20 flex w-full max-w-6xl flex-col items-center justify-center gap-12 px-4 py-16">
+      <div className="container z-20 flex w-full max-w-6xl flex-col items-center justify-center gap-12 px-4 py-40">
         <h1 className="text-center text-4xl font-bold leading-tight md:mb-10 md:text-6xl md:leading-snug">
           European{" "}
           <span className="text-purple-400 underline underline-offset-8">
@@ -72,6 +97,21 @@ const Hero = () => {
             </span>
           </div>
         </form>
+
+        {(searchMutation.isSuccess ||
+          searchMutation.isError ||
+          searchMutation.isLoading) && (
+          <div className="min-h-60 w-full rounded border border-gray-400 bg-gray-700/70 p-4">
+            {errorMessage && (
+              <div className="mx-auto w-full max-w-md">
+                <ErrorMessage
+                  title="Something went wrong"
+                  message={errorMessage}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </>
   );
