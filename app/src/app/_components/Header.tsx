@@ -10,8 +10,6 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
-  console.log(pathname);
-
   // Get position of scroll
   useEffect(() => {
     const checkIfOnTop = () => {
