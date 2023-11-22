@@ -12,7 +12,7 @@ const Footer = () => {
           </div>
 
           <p className="mx-auto mt-6 max-w-md text-center leading-relaxed text-gray-500">
-            This search engine was create as part of the{" "}
+            This search engine was created as part of the{" "}
             <Link
               target="_blank"
               href="https://sigarra.up.pt/feup/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=486244"
