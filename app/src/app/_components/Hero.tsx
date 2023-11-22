@@ -50,7 +50,7 @@ const Hero = () => {
             />
             <span className="absolute inset-y-0 end-0 grid w-10 place-content-center">
               <button
-                type="button"
+                type="submit"
                 className="text-gray-600 outline-none hover:text-gray-700 focus:ring-2 focus:ring-purple-500"
               >
                 <span className="sr-only">Search</span>
