@@ -1,0 +1,238 @@
+{
+  "add-field-type": [
+    {
+      "name": "int",
+      "class": "solr.IntPointField"
+    },
+    {
+      "name": "float",
+      "class": "solr.FloatPointField"
+    },
+    {
+      "name": "coordinates",
+      "class": "solr.LatLonPointSpatialField",
+      "docValues": "true"
+    },
+    {
+      "name": "wikipediaText",
+      "class": "solr.TextField",
+      "indexAnalyzer": {
+        "tokenizer": {
+          "class": "solr.ClassicTokenizerFactory"
+        },
+        "filters": [
+          { "class": "solr.ASCIIFoldingFilterFactory", "preserveOriginal": true },
+
+          { "class": "solr.LowerCaseFilterFactory" },
+
+          { "class": "solr.ClassicFilterFactory" },
+
+          { "class": "solr.EnglishMinimalStemFilterFactory" },
+
+          { "class": "solr.PorterStemFilterFactory" }
+        ]
+      },
+      "queryAnalyzer": {
+        "tokenizer": {
+          "class": "solr.ClassicTokenizerFactory"
+        },
+        "filters": [
+          { "class": "solr.ASCIIFoldingFilterFactory", "preserveOriginal": true },
+
+          { "class": "solr.LowerCaseFilterFactory" },
+
+          { "class": "solr.ClassicFilterFactory" },
+
+          { "class": "solr.EnglishMinimalStemFilterFactory" },
+
+          { "class": "solr.PorterStemFilterFactory" }
+        ]
+      }
+    },
+    {
+      "name": "text",
+      "class": "solr.TextField",
+      "indexAnalyzer": {
+        "tokenizer": {
+          "class": "solr.StandardTokenizerFactory"
+        },
+        "filters": [
+          { "class": "solr.ASCIIFoldingFilterFactory", "preserveOriginal": true },
+
+          { "class": "solr.LowerCaseFilterFactory" }
+        ]
+      },
+      "queryAnalyzer": {
+        "tokenizer": {
+          "class": "solr.StandardTokenizerFactory"
+        },
+        "filters": [
+          { "class": "solr.ASCIIFoldingFilterFactory", "preserveOriginal": true },
+
+          { "class": "solr.LowerCaseFilterFactory" }
+        ]
+      }
+    },
+    {
+      "name": "courseVector",
+      "class": "solr.DenseVectorField",
+      "vectorDimension": 384,
+      "similarityFunction": "cosine",
+      "knnAlgorithm": "hnsw"
+    }
+  ],
+
+  "add-field": [
+    {
+      "name": "2024_rank",
+      "type": "int",
+      "indexed": true
+    },
+    {
+      "name": "2023_rank",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "institution_name_-_wrong",
+      "type": "text",
+      "indexed": false
+    },
+    {
+      "name": "institution_name",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "country_code",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "country",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "size",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "focus",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "age",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "status",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "academic_reputation_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "academic_reputation_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "employer_reputation_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "employer_reputation_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "faculty_student_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "faculty_student_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "citations_per_faculty_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "citations_per_faculty_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "international_students_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "international_students_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "international_research_network_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "international_research_network_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "employment_outcomes_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "employment_outcomes_rank",
+      "type": "text",
+      "indexed": true
+    },
+    {
+      "name": "overall_score",
+      "type": "float",
+      "indexed": true
+    },
+    {
+      "name": "wikidata",
+      "type": "text",
+      "indexed": false
+    },
+    {
+      "name": "wikipedia_text",
+      "type": "wikipediaText",
+      "indexed": true
+    },
+    {
+      "name": "city_wikipedia_text",
+      "type": "wikipediaText",
+      "indexed": true
+    },
+    {
+      "name": "coordinates",
+      "type": "coordinates",
+      "indexed": true
+    },
+    {
+      "name": "vector",
+      "type": "university_vector",
+      "indexed": true,
+      "stored": true
+    }
+  ]
+}
