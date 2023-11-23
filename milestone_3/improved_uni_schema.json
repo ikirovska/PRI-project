@@ -74,7 +74,7 @@
       }
     },
     {
-      "name": "courseVector",
+      "name": "universityVector",
       "class": "solr.DenseVectorField",
       "vectorDimension": 384,
       "similarityFunction": "cosine",
@@ -230,7 +230,7 @@
     },
     {
       "name": "vector",
-      "type": "university_vector",
+      "type": "universityVector",
       "indexed": true,
       "stored": true
     }
