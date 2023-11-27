@@ -229,7 +229,7 @@
       "indexed": true
     },
     {
-      "name": "vector",
+      "name": "university_vector",
       "type": "universityVector",
       "indexed": true,
       "stored": true
