@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { TRPCReactProvider } from "~/trpc/react";
 import Footer from "./_components/Footer";
 import Header from "./_components/Header";
+import UniversityInfoComponent from './_components/UniversityInfo';
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,6 +23,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  let universityId = "2";
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
@@ -29,9 +32,11 @@ export default function RootLayout({
         <TRPCReactProvider cookies={cookies().toString()}>
           {children}
         </TRPCReactProvider>
-
+        <UniversityInfoComponent  universityId={universityId}/>
         <Footer />
       </body>
     </html>
   );
 }
+
+const universities = []

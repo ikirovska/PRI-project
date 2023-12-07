@@ -68,4 +68,38 @@ export const universitiesRouter = createTRPCRouter({
 
       return { message: input };
     }),
+
+  updateRelevance: publicProcedure
+    .input(z.object({
+      universityId: z.string(),
+      isRelevant: z.boolean(),
+    }))
+    .mutation(async ({ universityId, isRelevant }) => {
+      try {
+        // Query Solr to get the university document
+        const solrQuery = solrClient.query().q(`id:${universityId}`);
+        const [university] = await solrClient.search<UniversityDocument>(solrQuery);
+
+        if (!university) {
+          throw new Error(`University with ID ${universityId} not found.`);
+        }
+
+        // Update the relevance field
+        const updatedUniversity = {
+          ...university,
+          relevance: isRelevant ? (university.relevance || 0) + 1 : university.relevance,
+        };
+
+        // Update the document in Solr
+        await solrClient.update(updatedUniversity);
+
+        // Confirm the changes in Solr
+        await solrClient.commit();
+
+        return { success: true };
+      } catch (err) {
+        console.error("Error updating relevance in Solr:", err);
+        throw new Error("SOLR_UPDATE_ERROR");
+      }
+    }),
 });
