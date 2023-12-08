@@ -3,20 +3,18 @@ version: "3"
 services:
   flask_backend:
     build:
-      context: app/python_backend/
+      context: python_backend/
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
     links:
       - "solr"
-    environment:
-      - name=value
     env_file:
       - .env
 
   #  next_app:
   #    build:
-  #      context: app/ui/
+  #      context: ui/
   #      dockerfile: Dockerfile
   #    ports:
   #      - "3000:3000"
@@ -27,7 +25,7 @@ services:
 
   solr:
     build:
-      context: milestone_3/
+      context: ../milestone_3/
       dockerfile: Dockerfile
     ports:
       - "8983:8983"
@@ -39,9 +37,10 @@ services:
     env_file:
       - .env
 
+  # used to run script to update solr data
   solr_setup:
     build:
-      context: milestone_3/
+      context: ../milestone_3/
       dockerfile: Dockerfile_setup
     links:
       - "solr"
