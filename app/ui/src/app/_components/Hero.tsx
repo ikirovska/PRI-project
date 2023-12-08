@@ -110,6 +110,12 @@ const Hero = () => {
                 />
               </div>
             )}
+
+            <div className="flex w-full flex-col gap-4">
+              {searchMutation.data?.data.results?.map((x) => {
+                return <p>Name: {x.institution_name}</p>;
+              })}
+            </div>
           </div>
         )}
       </div>

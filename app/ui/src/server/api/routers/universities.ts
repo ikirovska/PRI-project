@@ -2,6 +2,8 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { createClient } from "solr-client";
 
+const backendUrl = process.env.BACKEND_DOCKER_URL ?? "http://localhost:5000";
+
 // Define TS University document schema
 type UniversityDocument = {
   "2024_rank": string;
@@ -35,21 +37,47 @@ type UniversityDocument = {
   coordinates: unknown;
 };
 
+type FlaskUniversityDocument = {
+  institution_name: string;
+  url: string;
+  wikipedia_text: string;
+  country: string;
+  highlight: string;
+  city_name: string;
+};
+
+type FlaskResponse = {
+  results: FlaskUniversityDocument[];
+  status: "OK" | "ERROR";
+};
+
 // instanciate Solr connection
 const solrClient = createClient({
   core: "universities",
   port: 8983,
-  path: "localhost",
+  path: "http://solr",
 });
 
 export const universitiesRouter = createTRPCRouter({
   // Example Solr query builder
   testSolr: publicProcedure
     .input(z.object({ input: z.string().min(1) }))
-    .mutation(async () => {
+    .mutation(async ({ input }) => {
       try {
-        const solrQuery = solrClient.query().q("Some query");
-        const data = await solrClient.search<UniversityDocument>(solrQuery);
+        const queryUrl =
+          backendUrl +
+          `/semantic-search?search=${input.input}}&limit=10&offset=0`;
+        const finalQueryUrl = encodeURI(queryUrl);
+
+        const res = await fetch(finalQueryUrl, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log(res.json());
+
+        const data = (await res.json()) as FlaskResponse;
 
         return {
           data: data,

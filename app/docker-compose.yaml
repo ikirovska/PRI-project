@@ -12,16 +12,16 @@ services:
     env_file:
       - .env
 
-  #  next_app:
-  #    build:
-  #      context: ui/
-  #      dockerfile: Dockerfile
-  #    ports:
-  #      - "3000:3000"
-  #    links:
-  #      - "flask_backend"
-  #    env_file:
-  #      - .env
+  next_app:
+    build:
+      context: ui/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    links:
+      - "flask_backend"
+    env_file:
+      - .env
 
   solr:
     build:

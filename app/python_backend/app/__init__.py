@@ -1,9 +1,10 @@
  #!/bin/python
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from sentence_transformers import SentenceTransformer
 import requests
 import os
+import json
 
 print("OS", os.environ["BACKEND_DOCKER_PORT"])
 print("OS", os.environ["SOLR_DOCKER_URL"])
@@ -72,8 +73,6 @@ def query_solr(search_text, limit, offset):
         
         temp_docs = []
         
-        print
-        
         for doc in docs:
             found_highlight = False
         
@@ -116,14 +115,14 @@ def search_solr():
     offset = args.get("offset") or 0
     
     if(search_query == None):
-        return "MISSING_PARAMETERS", 400 
+        return Response(json.dumps({"message":"MISSING_PARAMETERS"}),  mimetype='application/json', status=400)
     
     result = query_solr(search_text=search_query, limit=limit, offset=offset) 
     
     if(result.get("status") == "ERROR"):
-        return result, 400 
-    
-    return result, 200
+        return Response(json.dumps(result),  mimetype='application/json', status=400)
+
+    return Response(json.dumps(result),  mimetype='application/json', status=200)
 
 ########################################################
 
