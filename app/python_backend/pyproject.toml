@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "Universities search engine - Flask backend"
+version = "1.0.0"
+description = "Flask backend for a Universities search engine developed as part of the Project Retrieval and Information class at FEUP."
+authors = ["Zan <a1zan.zlender@gmail.com>", "Ilina", "Goncalo"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11 <3.12"
+flask = "3.0.0"
+waitress = "2.1.2"
+sentence_transformers = "2.2.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
