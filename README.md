@@ -30,6 +30,12 @@ Follow the steps defined in [Milestone 2](#milestone-2) and then follow the step
 
 ### Final webapp
 
+#### Architecture
+
+The simplified architecture of our service looks like so:
+
+[![Arthictecture](./docs/milestone_3/architecture.png)](./docs/milestone_3/architecture.png)
+
 #### Run locally
 
 To run the final app follow these steps:
