@@ -30,6 +30,8 @@ Follow the steps defined in [Milestone 2](#milestone-2) and then follow the step
 
 ### Final webapp
 
+The final result is a web application - search engine - that enables the user to search for any european university by typing whatever they are interested in.
+
 #### Architecture
 
 The simplified architecture of our service looks like so:

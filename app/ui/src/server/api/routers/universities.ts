@@ -52,7 +52,6 @@ type FlaskResponse = {
 };
 
 export const universitiesRouter = createTRPCRouter({
-  // Example Solr query builder
   search: publicProcedure
     .input(z.object({ input: z.string().min(1) }))
     .mutation(async ({ input }) => {
