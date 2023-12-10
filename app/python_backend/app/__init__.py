@@ -4,11 +4,6 @@ from flask import Flask, jsonify, request, make_response
 from sentence_transformers import SentenceTransformer
 import requests
 import os
-import json
-
-print("OS", os.environ["BACKEND_DOCKER_PORT"])
-print("OS", os.environ["SOLR_DOCKER_URL"])
-print("OS", os.environ["BACKEND_DOCKER_PORT"])
 
 app = Flask(__name__)
 
