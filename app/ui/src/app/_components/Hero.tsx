@@ -112,6 +112,10 @@ const Hero = () => {
             )}
 
             <div className="flex w-full flex-col gap-4">
+              {searchMutation.data?.data.results?.length === 0 && (
+                <p>No results found</p>
+              )}
+
               {searchMutation.data?.data.results?.map((x) => {
                 return <p>Name: {x.institution_name}</p>;
               })}
