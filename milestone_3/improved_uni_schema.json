@@ -233,6 +233,11 @@
       "type": "universityVector",
       "indexed": true,
       "stored": true
+    },
+    {
+      "name": "url",
+      "type": "text",
+      "indexed": false
     }
   ]
 }

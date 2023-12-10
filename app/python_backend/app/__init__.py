@@ -92,7 +92,7 @@ def query_solr(search_text, limit, offset):
                 "country": doc.get("country"), 
                 "wikipedia_text": doc.get("wikipedia_text")[:300] + "...", 
                 "city_name": doc.get("city_name")[0], 
-                "url": "TODO",
+                "url": doc.get("url"),
                 "highlights": found_highlight
             })
         
