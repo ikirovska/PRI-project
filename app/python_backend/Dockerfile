@@ -16,7 +16,7 @@ WORKDIR /app
 COPY pyproject.toml app/ /app/
 RUN pip install poetry && poetry install --no-root
 
-FROM deps as build
+FROM base as build
 WORKDIR /app
 
 # Copy the application code into the container
