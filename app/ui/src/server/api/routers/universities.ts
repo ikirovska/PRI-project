@@ -42,7 +42,7 @@ type FlaskUniversityDocument = {
   url: string;
   wikipedia_text: string;
   country: string;
-  highlight: string;
+  highlights: string[];
   city_name: string;
 };
 
@@ -61,6 +61,8 @@ export const universitiesRouter = createTRPCRouter({
           backendUrl +
           `/semantic-query?search=${input.input}&limit=10&offset=0`;
         const finalQueryUrl = encodeURI(queryUrl);
+
+        console.log("QQ", finalQueryUrl);
 
         const res = await fetch(finalQueryUrl, {
           headers: {

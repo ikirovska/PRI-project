@@ -77,14 +77,10 @@ def query_solr(search_text, limit, offset):
         
         for doc in docs:
             found_highlight = False
-        
             for h in highlights:
-                print(doc.get("id"))
-
                 if(doc.get("id") == h):
                     found_highlight = highlights.get(h).get("wikipedia_text", [])
 
-        
             found_highlight = found_highlight or False
             
             temp_docs.append({

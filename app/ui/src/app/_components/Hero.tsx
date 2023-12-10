@@ -117,11 +117,24 @@ const Hero = () => {
                 <p>No results found</p>
               )}
 
-              {searchMutation.data?.data.results?.map((x) => {
+              {searchMutation.data?.data.results?.map((x, idx) => {
+                console.log(x.highlights);
                 return (
-                  <div className="flex w-full flex-col gap-3 rounded-lg border p-4">
+                  <div
+                    key={`uni-${idx}`}
+                    className="flex w-full flex-col gap-3 rounded-lg border p-4"
+                  >
                     <p className="font-bold">{x.institution_name}</p>
                     <p>{x.wikipedia_text}</p>
+
+                    {x.highlights?.map((x, idx) => {
+                      return (
+                        <div
+                          key={idx}
+                          dangerouslySetInnerHTML={{ __html: x }}
+                        ></div>
+                      );
+                    })}
 
                     <Link
                       className="w-fit rounded border bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
