@@ -26,7 +26,7 @@ def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset)
     data = {
         "q": query,
         "rqq": f"{{!knn f=university_vector topK=10}}{embedding}",
-        "fl": "institution_name,wikipedia_text,city_name,country,id",
+        "fl": "institution_name,wikipedia_text,city_name,country,id,url",
         "start": offset,
         "rows": limit,
         "wt": "json",
