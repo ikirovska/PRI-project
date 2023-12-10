@@ -27,8 +27,7 @@ const Hero = () => {
         }
       }
     },
-    onSuccess: (data) => {
-      console.log("SUCCESS: ", data);
+    onSuccess: () => {
       setErrorMessage(undefined);
     },
   });
@@ -118,7 +117,6 @@ const Hero = () => {
               )}
 
               {searchMutation.data?.data.results?.map((x, idx) => {
-                console.log(x.highlights);
                 return (
                   <div
                     key={`uni-${idx}`}
@@ -130,7 +128,7 @@ const Hero = () => {
                     {x.highlights?.map((x, idx) => {
                       return (
                         <div
-                          key={idx}
+                          key={`highlight-${idx}`}
                           dangerouslySetInnerHTML={{ __html: x }}
                         ></div>
                       );
