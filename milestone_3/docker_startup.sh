@@ -4,9 +4,22 @@ echo "Running solr startup script ~\n\n"
 
 sleep 2
 
-until $(curl --output /dev/null --silent --head --fail http://solr:8983/solr); do
-    echo "\n>>> Waiting for Solr to start...\n"
-    sleep 5
+status_code=""
+
+while [ "$status_code" != "200" ] && [ "$status_code" != "302" ] && [ "$status_code" != "503" ]; do
+    response=$(curl -s -w "%{http_code}" http://solr:8983/solr)
+    status_code=$(echo "$response" | tail -n 1)
+    body=$(echo "$response" | sed '$d')  # Extract the response body (excluding the status code)
+
+    if [ "$status_code" != "200" ] && [ "$status_code" != "302" ] && [ "$status_code" != "503" ]; then
+        echo "\n>>> Waiting for Solr to start...\n"
+        echo "Retrying... Status code: $status_code"
+        echo "Response body: $body"
+        sleep 2  # You can adjust the sleep duration as needed
+    else
+        echo "Success! Status code: $status_code"
+        echo "Response body: $body"
+    fi
 done
 
 echo "\n>>> Uploading schema...\n\n"
