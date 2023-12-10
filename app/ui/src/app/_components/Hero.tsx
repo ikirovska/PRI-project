@@ -4,6 +4,7 @@ import React, { type FormEvent, useState } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
+import Link from "next/link";
 
 const Hero = () => {
   const [input, setInput] = useState("");
@@ -117,7 +118,12 @@ const Hero = () => {
               )}
 
               {searchMutation.data?.data.results?.map((x) => {
-                return <p>Name: {x.institution_name}</p>;
+                return (
+                  <div className="flex w-full flex-col gap-3 rounded-lg border p-4">
+                    <p>Name: {x.institution_name}</p>;
+                    <Link href={x.url ?? "#"}>Open</Link>
+                  </div>
+                );
               })}
             </div>
           </div>
