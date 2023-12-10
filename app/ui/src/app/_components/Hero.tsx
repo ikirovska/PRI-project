@@ -9,7 +9,7 @@ const Hero = () => {
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>();
 
-  const searchMutation = api.universities.testSolr.useMutation({
+  const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
       switch (err.message) {
         case "SOLR_NOT_RUNNING": {

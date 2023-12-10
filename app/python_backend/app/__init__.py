@@ -1,6 +1,6 @@
  #!/bin/python
 
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, make_response
 from sentence_transformers import SentenceTransformer
 import requests
 import os
@@ -65,6 +65,8 @@ def query_solr(search_text, limit, offset):
     
     embedding = text_to_embedding(search_text)
     query = create_solr_query_from_text(search_text)
+    
+    print("QUERY", query)
 
     try:
         results = create_solr_knn_query(solr_endpoint, collection, embedding, query, limit, offset)
@@ -80,8 +82,7 @@ def query_solr(search_text, limit, offset):
                 print(doc.get("id"))
 
                 if(doc.get("id") == h):
-                    print("HERE")
-                    found_highlight = highlights.get(h).get("wikipedia_text", [])[0]
+                    found_highlight = highlights.get(h).get("wikipedia_text", [])
 
         
             found_highlight = found_highlight or False
@@ -92,7 +93,7 @@ def query_solr(search_text, limit, offset):
                 "wikipedia_text": doc.get("wikipedia_text")[:300] + "...", 
                 "city_name": doc.get("city_name")[0], 
                 "url": "TODO",
-                "highlight": found_highlight
+                "highlights": found_highlight
             })
         
         return {
@@ -115,14 +116,15 @@ def search_solr():
     offset = args.get("offset") or 0
     
     if(search_query == None):
-        return Response(json.dumps({"message":"MISSING_PARAMETERS"}),  mimetype='application/json', status=400)
+        return make_response(jsonify({"message":"MISSING_PARAMETERS"}), status=400)
     
     result = query_solr(search_text=search_query, limit=limit, offset=offset) 
     
     if(result.get("status") == "ERROR"):
-        return Response(json.dumps(result),  mimetype='application/json', status=400)
+        res_data = jsonify(result)
+        return make_response(res_data, 400)
 
-    return Response(json.dumps(result),  mimetype='application/json', status=200)
+    return jsonify(result)
 
 ########################################################
 

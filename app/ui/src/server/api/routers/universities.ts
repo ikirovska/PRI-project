@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { createClient } from "solr-client";
 
 const backendUrl = process.env.BACKEND_DOCKER_URL ?? "http://localhost:5000";
 
 // Define TS University document schema
+// ? Not needed anymore
 type UniversityDocument = {
   "2024_rank": string;
   "2023_rank": string;
@@ -51,22 +51,15 @@ type FlaskResponse = {
   status: "OK" | "ERROR";
 };
 
-// instanciate Solr connection
-const solrClient = createClient({
-  core: "universities",
-  port: 8983,
-  path: "http://solr",
-});
-
 export const universitiesRouter = createTRPCRouter({
   // Example Solr query builder
-  testSolr: publicProcedure
+  search: publicProcedure
     .input(z.object({ input: z.string().min(1) }))
     .mutation(async ({ input }) => {
       try {
         const queryUrl =
           backendUrl +
-          `/semantic-search?search=${input.input}}&limit=10&offset=0`;
+          `/semantic-query?search=${input.input}&limit=10&offset=0`;
         const finalQueryUrl = encodeURI(queryUrl);
 
         const res = await fetch(finalQueryUrl, {
@@ -74,8 +67,6 @@ export const universitiesRouter = createTRPCRouter({
             "Content-Type": "application/json",
           },
         });
-
-        console.log(res.json());
 
         const data = (await res.json()) as FlaskResponse;
 
@@ -86,14 +77,5 @@ export const universitiesRouter = createTRPCRouter({
         console.log("Error while executing universities.testSolr query.", err);
         throw new Error("SOLR_NOT_RUNNING");
       }
-    }),
-
-  search: publicProcedure
-    .input(z.object({ input: z.string().min(1) }))
-    .mutation(async ({ input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      return { message: input };
     }),
 });

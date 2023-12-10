@@ -18,7 +18,6 @@ WORKDIR /app
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN pnpm i
 
-
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
