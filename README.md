@@ -49,6 +49,14 @@ To run the final app follow these steps:
    2. if no documents are shown, run `docker compose up -d --build solr_setup` or restart the `solr_setup` container which will upload all documents
 4. Open [http://localhost:3000](http://localhost:3000) and start using the app
 
-#### Remote
+#### Apply changes
+
+If you need to apply changes to any of the running containers, e.g. changes in the code, follow these steps:
+
+1. run `docker compose down -v`
+2. then `docker compose up -d --build`
+3. follow steps 3 and after as described in [Run locally](#run-locally)
+
+#### Remote access
 
 The final webapp is deployed on DigitalOcean, accesible on this link: [https://TODO_ADD_LINK.com](https://TODO_ADD_LINK.com).
