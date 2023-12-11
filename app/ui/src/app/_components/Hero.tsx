@@ -9,7 +9,7 @@ import Link from "next/link";
 const Hero = () => {
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>();
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
 
   const searchMutation = api.universities.search.useMutation({
