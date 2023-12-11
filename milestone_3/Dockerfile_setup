@@ -1,0 +1,12 @@
+# Use the official Python image as the base image
+FROM solr:9.3
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the application code into the container
+COPY improved_uni_schema.json docker_startup.sh /app/
+COPY datasets/ /app/datasets/
+
+# Command to run the application
+CMD ["/bin/bash", "docker_startup.sh"]
