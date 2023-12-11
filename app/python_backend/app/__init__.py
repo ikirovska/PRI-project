@@ -20,7 +20,7 @@ def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset)
 
     data = {
         "q": query,
-        "rq": "{!rerank reRankQuery=$rqq reRankDocs={limit} reRankWeight=1}",
+        #"rq": "{!rerank reRankQuery=$rqq reRankDocs=" + limit + " reRankWeight=1}", // makes results worse
         "rqq": f"{{!knn f=university_vector topK=10}}{embedding}",
         "fl": "institution_name,wikipedia_text,city_name,country,id,url",
         "start": offset,
@@ -77,7 +77,7 @@ def query_solr(search_text, limit, offset):
                 if(doc.get("id") == h):
                     found_highlight = highlights.get(h).get("wikipedia_text", [])
 
-            found_highlight = found_highlight or False
+            found_highlight = found_highlight or []
             
             temp_docs.append({
                 "institution_name": doc.get("institution_name"),
@@ -96,7 +96,7 @@ def query_solr(search_text, limit, offset):
         print(f"Error {e.response.status_code}: {e.response.text}")
         return {
             "status": "ERROR",
-            "results": False
+            "results": []
         }
 
 # expected params - search, offset, limit

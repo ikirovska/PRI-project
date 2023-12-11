@@ -5,12 +5,14 @@ import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
 import Link from "next/link";
+import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
 
 const Hero = () => {
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>();
   const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
+  const [results, setResults] = useState<FlaskUniversityDocument[]>([]);
 
   const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
@@ -29,13 +31,15 @@ const Hero = () => {
         }
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      setResults((prev) => [...prev, ...data.data.results]);
       setErrorMessage(undefined);
     },
   });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setResults([]);
     searchMutation.mutate({ input: input, limit: limit, offset: offset });
   };
 
@@ -115,8 +119,6 @@ const Hero = () => {
           searchMutation.isError ||
           searchMutation.isLoading) && (
           <div className="min-h-[300px] w-full rounded border border-gray-400 bg-gray-700/70 p-4">
-            {searchMutation.isLoading && <p>Loading...</p>}
-
             {errorMessage && (
               <div className="mx-auto w-full max-w-md">
                 <ErrorMessage
@@ -127,11 +129,11 @@ const Hero = () => {
             )}
 
             <div className="flex w-full flex-col gap-4">
-              {searchMutation.data?.data.results?.length === 0 && (
+              {searchMutation.isSuccess && results.length === 0 && (
                 <p>No results found</p>
               )}
 
-              {searchMutation.data?.data.results?.map((x, idx) => {
+              {results.map((x, idx) => {
                 return (
                   <div
                     key={`uni-${idx}`}
@@ -160,6 +162,8 @@ const Hero = () => {
                 );
               })}
             </div>
+
+            {searchMutation.isLoading && <p>Loading...</p>}
 
             <button
               type="button"

@@ -37,7 +37,7 @@ type UniversityDocument = {
   coordinates: unknown;
 };
 
-type FlaskUniversityDocument = {
+export type FlaskUniversityDocument = {
   institution_name: string;
   url: string;
   wikipedia_text: string;
