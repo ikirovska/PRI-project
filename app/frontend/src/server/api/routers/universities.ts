@@ -2,7 +2,10 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { createClient } from "solr-client";
 
+const backendUrl = process.env.BACKEND_DOCKER_URL ?? "http://localhost:5000";
+
 // Define TS University document schema
+// ? Not needed anymore
 type UniversityDocument = {
   "2024_rank": string;
   "2023_rank": string;
@@ -33,6 +36,21 @@ type UniversityDocument = {
   wikipedia_text: string;
   city_wikipedia_text: string;
   coordinates: unknown;
+  url: string;
+};
+
+export type FlaskUniversityDocument = {
+  institution_name: string;
+  url: string;
+  wikipedia_text: string;
+  country: string;
+  highlights: string[];
+  city_name: string;
+};
+
+type FlaskResponse = {
+  results: FlaskUniversityDocument[];
+  status: "OK" | "ERROR";
 };
 
 // instanciate Solr connection
@@ -42,14 +60,32 @@ const solrClient = createClient({
   path: "localhost",
 });
 
+
 export const universitiesRouter = createTRPCRouter({
-  // Example Solr query builder
-  testSolr: publicProcedure
-    .input(z.object({ input: z.string().min(1) }))
-    .mutation(async () => {
+  search: publicProcedure
+    .input(
+      z.object({
+        input: z.string().min(1),
+        limit: z.number(),
+        offset: z.number(),
+      }),
+    )
+    .mutation(async ({ input }) => {
       try {
-        const solrQuery = solrClient.query().q("Some query");
-        const data = await solrClient.search<UniversityDocument>(solrQuery);
+        const queryUrl =
+          backendUrl +
+          `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
+        const finalQueryUrl = encodeURI(queryUrl);
+
+        console.log("QQ", finalQueryUrl);
+
+        const res = await fetch(finalQueryUrl, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = (await res.json()) as FlaskResponse;
 
         return {
           data: data,
@@ -60,16 +96,7 @@ export const universitiesRouter = createTRPCRouter({
       }
     }),
 
-  search: publicProcedure
-    .input(z.object({ input: z.string().min(1) }))
-    .mutation(async ({ input }) => {
-      // simulate a slow db call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      return { message: input };
-    }),
-
-  updateRelevance: publicProcedure
+    updateRelevance: publicProcedure
     .input(z.object({
       universityId: z.string(),
       isRelevant: z.boolean(),

@@ -4,12 +4,17 @@ import React, { type FormEvent, useState } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
+import Link from "next/link";
+import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
 
 const Hero = () => {
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [limit] = useState(10);
+  const [offset, setOffset] = useState(0);
+  const [results, setResults] = useState<FlaskUniversityDocument[]>([]);
 
-  const searchMutation = api.universities.testSolr.useMutation({
+  const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
       switch (err.message) {
         case "SOLR_NOT_RUNNING": {
@@ -27,14 +32,25 @@ const Hero = () => {
       }
     },
     onSuccess: (data) => {
-      console.log("SUCCESS: ", data);
+      setResults((prev) => [...prev, ...data.data.results]);
       setErrorMessage(undefined);
     },
   });
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    searchMutation.mutate({ input: input });
+    setResults([]);
+    searchMutation.mutate({ input: input, limit: limit, offset: offset });
+  };
+
+  const handleLoadMore = () => {
+    searchMutation.mutate({
+      input: input,
+      limit: limit,
+      offset: offset + limit,
+    });
+
+    setOffset((prev) => prev + limit);
   };
 
   return (
@@ -97,6 +113,7 @@ const Hero = () => {
             </span>
           </div>
         </form>
+        {}
 
         {(searchMutation.isSuccess ||
           searchMutation.isError ||
@@ -110,6 +127,51 @@ const Hero = () => {
                 />
               </div>
             )}
+
+            <div className="flex w-full flex-col gap-4">
+              {searchMutation.isSuccess && results.length === 0 && (
+                <p>No results found</p>
+              )}
+
+              {results.map((x, idx) => {
+                return (
+                  <div
+                    key={`uni-${idx}`}
+                    className="flex w-full flex-col gap-3 rounded-lg border p-4"
+                  >
+                    <p className="font-bold">{x.institution_name}</p>
+                    <p>{x.wikipedia_text}</p>
+
+                    {x.highlights?.map((x, idx) => {
+                      return (
+                        <div
+                          key={`highlight-${idx}`}
+                          dangerouslySetInnerHTML={{ __html: x }}
+                        ></div>
+                      );
+                    })}
+
+                    <Link
+                      className="w-fit rounded border bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
+                      href={x.url ?? "#"}
+                      target="_blank"
+                    >
+                      Open
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
+
+            {searchMutation.isLoading && <p>Loading...</p>}
+
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              className="mx-auto rounded bg-purple-700 px-8 py-3 text-white hover:bg-purple-800"
+            >
+              Load more results
+            </button>
           </div>
         )}
       </div>

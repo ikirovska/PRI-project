@@ -1,0 +1,53 @@
+version: "3"
+
+services:
+  flask_backend:
+    build:
+      context: python_backend/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    links:
+      - "solr"
+    env_file:
+      - .env
+
+  next_app:
+    build:
+      context: frontend/
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    links:
+      - "flask_backend"
+    env_file:
+      - .env
+
+  solr:
+    build:
+      context: ../milestone_3/
+      dockerfile: Dockerfile
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr_data:/var/solr
+    command:
+      - solr-precreate
+      - universities
+    env_file:
+      - .env
+
+  # used to run script to update solr data
+  solr_setup:
+    build:
+      context: ../milestone_3/
+      dockerfile: Dockerfile_setup
+    links:
+      - "solr"
+    depends_on:
+      - solr
+    env_file:
+      - .env
+
+volumes:
+  solr_data:
