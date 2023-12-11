@@ -24,9 +24,10 @@ done
 
 echo "\n>>> Uploading schema...\n\n"
 
-curl -X POST -H 'Content-type:application/json' \
---data-binary "@improved_uni_schema.json" \
-http://solr:8983/solr/universities/schema
+until $(curl --output /dev/null --fail -X POST -H 'Content-type:application/json' --data-binary "@improved_uni_schema.json" http://solr:8983/solr/universities/schema); do
+    printf "\n>>> Waiting for Solr to start...\n"
+    sleep 5
+done
 
 echo "\n>>> Uploading documents...\n\n"
 
