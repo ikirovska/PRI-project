@@ -90,6 +90,7 @@ def query_solr(search_text, limit, offset):
         
         return {
             "status": "OK",
+            "num_found": results.get("response", {}).get("numFound"),
             "results": temp_docs
         }
     except requests.HTTPError as e:

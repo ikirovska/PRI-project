@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { createClient } from "solr-client";
 
 const backendUrl = process.env.BACKEND_DOCKER_URL ?? "http://localhost:5000";
 
@@ -50,17 +49,17 @@ export type FlaskUniversityDocument = {
 
 type FlaskResponse = {
   results: FlaskUniversityDocument[];
+  num_found?: number;
   status: "OK" | "ERROR";
 };
 
 // instanciate Solr connection
-const solrClient = createClient({
+/* const solrClient = createClient({
   core: "universities",
   port: 8983,
   path: "localhost",
 });
-
-
+ */
 export const universitiesRouter = createTRPCRouter({
   search: publicProcedure
     .input(
@@ -96,25 +95,33 @@ export const universitiesRouter = createTRPCRouter({
       }
     }),
 
-    updateRelevance: publicProcedure
-    .input(z.object({
-      universityId: z.string(),
-      isRelevant: z.boolean(),
-    }))
-    .mutation(async ({ universityId, isRelevant }) => {
+  // ! THIS IS NOT LOCAL
+  /*   updateRelevance: publicProcedure
+    .input(
+      z.object({
+        universityId: z.string(),
+        isRelevant: z.boolean(),
+      }),
+    )
+    .mutation(async ({ input }) => {
       try {
         // Query Solr to get the university document
-        const solrQuery = solrClient.query().q(`id:${universityId}`);
-        const [university] = await solrClient.search<UniversityDocument>(solrQuery);
+        const solrQuery = solrClient.query().q(`id:${input.universityId}`);
+        const [university] =
+          await solrClient.search<UniversityDocument>(solrQuery);
 
         if (!university) {
-          throw new Error(`University with ID ${universityId} not found.`);
+          throw new Error(
+            `University with ID ${input.universityId} not found.`,
+          );
         }
 
         // Update the relevance field
         const updatedUniversity = {
           ...university,
-          relevance: isRelevant ? (university.relevance || 0) + 1 : university.relevance,
+          relevance: input.isRelevant
+            ? (university.relevance || 0) + 1
+            : university.relevance,
         };
 
         // Update the document in Solr
@@ -128,5 +135,5 @@ export const universitiesRouter = createTRPCRouter({
         console.error("Error updating relevance in Solr:", err);
         throw new Error("SOLR_UPDATE_ERROR");
       }
-    }),
+    }), */
 });

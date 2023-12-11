@@ -4,8 +4,9 @@ import React, { type FormEvent, useState } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
-import Link from "next/link";
 import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
+import { PulseLoader as Loader } from "react-spinners";
+import SearchResultCard from "./SearchResultCard";
 
 const Hero = () => {
   const [input, setInput] = useState("");
@@ -36,6 +37,10 @@ const Hero = () => {
       setErrorMessage(undefined);
     },
   });
+
+  const noMoreResults =
+    searchMutation.data?.data.num_found !== undefined &&
+    searchMutation.data?.data.num_found === results.length;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -113,12 +118,13 @@ const Hero = () => {
             </span>
           </div>
         </form>
-        {}
 
         {(searchMutation.isSuccess ||
           searchMutation.isError ||
           searchMutation.isLoading) && (
           <div className="min-h-[300px] w-full rounded border border-gray-400 bg-gray-700/70 p-4">
+            <h2 className="mb-6 text-xl font-medium">Results</h2>
+
             {errorMessage && (
               <div className="mx-auto w-full max-w-md">
                 <ErrorMessage
@@ -130,48 +136,37 @@ const Hero = () => {
 
             <div className="flex w-full flex-col gap-4">
               {searchMutation.isSuccess && results.length === 0 && (
-                <p>No results found</p>
+                <p className="text-center">No results found</p>
               )}
 
               {results.map((x, idx) => {
-                return (
-                  <div
-                    key={`uni-${idx}`}
-                    className="flex w-full flex-col gap-3 rounded-lg border p-4"
-                  >
-                    <p className="font-bold">{x.institution_name}</p>
-                    <p>{x.wikipedia_text}</p>
-
-                    {x.highlights?.map((x, idx) => {
-                      return (
-                        <div
-                          key={`highlight-${idx}`}
-                          dangerouslySetInnerHTML={{ __html: x }}
-                        ></div>
-                      );
-                    })}
-
-                    <Link
-                      className="w-fit rounded border bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
-                      href={x.url ?? "#"}
-                      target="_blank"
-                    >
-                      Open
-                    </Link>
-                  </div>
-                );
+                return <SearchResultCard key={idx} university={x} />;
               })}
             </div>
 
-            {searchMutation.isLoading && <p>Loading...</p>}
+            {searchMutation.isLoading && (
+              <div className="mx-auto my-12 w-fit">
+                <Loader color="white" />
+              </div>
+            )}
 
-            <button
-              type="button"
-              onClick={handleLoadMore}
-              className="mx-auto rounded bg-purple-700 px-8 py-3 text-white hover:bg-purple-800"
-            >
-              Load more results
-            </button>
+            {searchMutation.isSuccess &&
+              !(searchMutation.isSuccess && results.length === 0) &&
+              !noMoreResults && (
+                <div className="mt-12 flex w-full justify-center">
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    className="mx-auto rounded bg-purple-700 px-8 py-3 text-white hover:bg-purple-800"
+                  >
+                    Load more results
+                  </button>
+                </div>
+              )}
+
+            {searchMutation.isSuccess && noMoreResults && (
+              <p className="text-center">No more results.</p>
+            )}
           </div>
         )}
       </div>
