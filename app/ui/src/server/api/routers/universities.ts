@@ -53,12 +53,18 @@ type FlaskResponse = {
 
 export const universitiesRouter = createTRPCRouter({
   search: publicProcedure
-    .input(z.object({ input: z.string().min(1) }))
+    .input(
+      z.object({
+        input: z.string().min(1),
+        limit: z.number(),
+        offset: z.number(),
+      }),
+    )
     .mutation(async ({ input }) => {
       try {
         const queryUrl =
           backendUrl +
-          `/semantic-query?search=${input.input}&limit=10&offset=0`;
+          `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
         const finalQueryUrl = encodeURI(queryUrl);
 
         console.log("QQ", finalQueryUrl);

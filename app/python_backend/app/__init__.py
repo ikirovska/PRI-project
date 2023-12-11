@@ -20,6 +20,7 @@ def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset)
 
     data = {
         "q": query,
+        "rq": "{!rerank reRankQuery=$rqq reRankDocs={limit} reRankWeight=1}",
         "rqq": f"{{!knn f=university_vector topK=10}}{embedding}",
         "fl": "institution_name,wikipedia_text,city_name,country,id,url",
         "start": offset,

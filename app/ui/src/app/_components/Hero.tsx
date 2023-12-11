@@ -9,6 +9,8 @@ import Link from "next/link";
 const Hero = () => {
   const [input, setInput] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [limit, setLimit] = useState(10);
+  const [offset, setOffset] = useState(0);
 
   const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
@@ -34,7 +36,17 @@ const Hero = () => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    searchMutation.mutate({ input: input });
+    searchMutation.mutate({ input: input, limit: limit, offset: offset });
+  };
+
+  const handleLoadMore = () => {
+    searchMutation.mutate({
+      input: input,
+      limit: limit,
+      offset: offset + limit,
+    });
+
+    setOffset((prev) => prev + limit);
   };
 
   return (
@@ -97,11 +109,14 @@ const Hero = () => {
             </span>
           </div>
         </form>
+        {}
 
         {(searchMutation.isSuccess ||
           searchMutation.isError ||
           searchMutation.isLoading) && (
           <div className="min-h-[300px] w-full rounded border border-gray-400 bg-gray-700/70 p-4">
+            {searchMutation.isLoading && <p>Loading...</p>}
+
             {errorMessage && (
               <div className="mx-auto w-full max-w-md">
                 <ErrorMessage
@@ -145,6 +160,14 @@ const Hero = () => {
                 );
               })}
             </div>
+
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              className="mx-auto rounded bg-purple-700 px-8 py-3 text-white hover:bg-purple-800"
+            >
+              Load more results
+            </button>
           </div>
         )}
       </div>
