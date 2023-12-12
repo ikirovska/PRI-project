@@ -18,7 +18,10 @@ const Hero = () => {
     undefined,
   );
 
-  let selectedRelevantCount = 0;
+  const selectedRelevantCount = results.reduce((acc, val) => {
+    const found = val.isRelevant ? 1 : 0;
+    return (acc += found);
+  }, 0);
 
   const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
@@ -83,6 +86,9 @@ const Hero = () => {
     const relevantDocs = results.filter((result) => result.isRelevant);
     const nonRelevantDocs = results.filter((result) => !result.isRelevant);
 
+    console.log("DOC", relevantDocs);
+    console.log("NDOC", nonRelevantDocs);
+
     const alpha = 1.0;
     const beta = 0.75;
     const gamma = 0.15;
@@ -91,20 +97,21 @@ const Hero = () => {
 
     // Use rocchio algorithm to update the query vector
     relevantDocs.forEach((doc) => {
+      console.log("DOC", doc);
       newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value + alpha * (doc.university_vector[idx - 1] ?? 0);
+        return value + alpha * (doc.university_vector[idx] ?? 0);
       });
     });
 
     nonRelevantDocs.forEach((doc) => {
       newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value - beta * (doc.university_vector[idx - 1] ?? 0);
+        return value - beta * (doc.university_vector[idx] ?? 0);
       });
     });
 
     results.forEach((doc) => {
       newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value - gamma * (doc.university_vector[idx - 1] ?? 0);
+        return value - gamma * (doc.university_vector[idx] ?? 0);
       });
     });
 
@@ -128,8 +135,18 @@ const Hero = () => {
     });
   };
 
-  const handleRelevanceChange = (id: string, isRelevant: boolean) => {
-    selectedRelevantCount += isRelevant ? 1 : -1;
+  const handleRelevanceChange = (id: string) => {
+    const newResults = results.map((x) => {
+      if (x.id === id) {
+        return {
+          ...x,
+          isRelevant: !x.isRelevant,
+        };
+      }
+      return x;
+    });
+
+    setResults(newResults);
   };
 
   return (
@@ -228,6 +245,7 @@ const Hero = () => {
                   <SearchResultCard
                     key={idx}
                     university={x}
+                    isRelevant={x.isRelevant}
                     onRelevanceChange={handleRelevanceChange}
                   />
                 );

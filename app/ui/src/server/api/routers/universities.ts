@@ -40,6 +40,7 @@ type UniversityDocument = {
 };
 
 export type FlaskUniversityDocument = {
+  id: string;
   institution_name: string;
   url: string;
   wikipedia_text: string;
