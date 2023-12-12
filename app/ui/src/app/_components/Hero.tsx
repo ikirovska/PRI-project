@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type FormEvent, useState } from "react";
+import React, {type FormEvent, useEffect, useState} from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
@@ -14,6 +14,7 @@ const Hero = () => {
   const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [results, setResults] = useState<FlaskUniversityDocument[]>([]);
+  let selectedRelevantCount = 0;
 
   const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
@@ -33,14 +34,20 @@ const Hero = () => {
       }
     },
     onSuccess: (data) => {
-      setResults((prev) => [...prev, ...data.data.results]);
+      setResults((prev) => [
+        ...prev,
+        ...data.data.results.map((result) => ({
+          ...result,
+          isRelevant: false, // Set the initial value based on your requirements
+        })),
+      ]);
       setErrorMessage(undefined);
     },
   });
 
   const noMoreResults =
-    searchMutation.data?.data.num_found !== undefined &&
-    searchMutation.data?.data.num_found === results.length;
+      searchMutation.data?.data.num_found !== undefined &&
+      searchMutation.data?.data.num_found === results.length;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -56,6 +63,15 @@ const Hero = () => {
     });
 
     setOffset((prev) => prev + limit);
+  };
+
+  const handleRelevanceSubmit = () => {
+    // Print the count to the console
+    console.log("Selected Relevant Count: ",selectedRelevantCount);
+  };
+
+  const handleRelevanceChange = (id: string, isRelevant: boolean) => {
+    selectedRelevantCount += isRelevant ? 1 : -1;
   };
 
   return (
@@ -139,8 +155,19 @@ const Hero = () => {
                 <p className="text-center">No results found</p>
               )}
 
+
+              <div className="relative flex top-0 left-0 z-30 ">
+                <button
+                    type="button"
+                    onClick={handleRelevanceSubmit}
+                    className="rounded bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
+                >
+                  Submit Relevance
+                </button>
+              </div>
+
               {results.map((x, idx) => {
-                return <SearchResultCard key={idx} university={x} />;
+                return <SearchResultCard key={idx} university={x} onRelevanceChange={handleRelevanceChange} />;
               })}
             </div>
 

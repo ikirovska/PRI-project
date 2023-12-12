@@ -45,6 +45,7 @@ export type FlaskUniversityDocument = {
   country: string;
   highlights: string[];
   city_name: string;
+  isRelevant: boolean;
 };
 
 type FlaskResponse = {
