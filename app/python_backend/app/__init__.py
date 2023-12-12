@@ -7,7 +7,6 @@ import os
 
 app = Flask(__name__)
 
-
 def text_to_embedding(text):
     model = SentenceTransformer('all-MiniLM-L6-v2')
     embedding = model.encode(text, convert_to_tensor=False).tolist()
@@ -56,11 +55,17 @@ def create_solr_query_from_text(text):
 
     return query
 
-def query_solr(search_text, limit, offset):
+def query_solr(search_text, limit, offset, query_vector):
     solr_endpoint = (os.environ["SOLR_DOCKER_URL"] or "http://localhost:8983") + "/solr"
     collection = "universities"
     
-    embedding = text_to_embedding(search_text)
+    embedding = []
+    
+    if(query_vector != None):
+        embedding = query_vector
+    else:
+        embedding = text_to_embedding(search_text)
+        
     query = create_solr_query_from_text(search_text)
     
     print("QUERY", query)
@@ -93,7 +98,8 @@ def query_solr(search_text, limit, offset):
         return {
             "status": "OK",
             "num_found": results.get("response", {}).get("numFound"),
-            "results": temp_docs
+            "results": temp_docs,
+            "query_vector": embedding
         }
     except requests.HTTPError as e:
         print(f"Error {e.response.status_code}: {e.response.text}")
@@ -109,26 +115,18 @@ def search_solr():
     search_query = args.get("search")
     limit = args.get("limit") or 10
     offset = args.get("offset") or 0
+    query_vector = args.get("query_vector", None) or None
     
     if(search_query == None):
         return make_response(jsonify({"message":"MISSING_PARAMETERS"}), status=400)
     
-    result = query_solr(search_text=search_query, limit=limit, offset=offset) 
+    result = query_solr(search_text=search_query, limit=limit, offset=offset, query_vector=query_vector) 
     
     if(result.get("status") == "ERROR"):
         res_data = jsonify(result)
         return make_response(res_data, 400)
 
     return jsonify(result)
-
-@app.route('/text-to-embedding', methods=["GET"])
-def text_to_embedding(text):
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-    embedding = model.encode(text, convert_to_tensor=False).tolist()
-
-    # Convert the embedding to the expected format
-    embedding_str = "[" + ",".join(map(str, embedding)) + "]"
-    return embedding_str
 
 ########################################################
 

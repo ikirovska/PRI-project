@@ -1,11 +1,11 @@
 "use client";
 
-import React, {type FormEvent, useState} from "react";
+import React, { type FormEvent, useState } from "react";
 import Image from "next/image";
-import {api} from "~/trpc/react";
+import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
-import type {FlaskUniversityDocument} from "~/server/api/routers/universities";
-import {PulseLoader as Loader} from "react-spinners";
+import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
+import { PulseLoader as Loader } from "react-spinners";
 import SearchResultCard from "./SearchResultCard";
 
 const Hero = () => {
@@ -14,6 +14,9 @@ const Hero = () => {
   const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [results, setResults] = useState<FlaskUniversityDocument[]>([]);
+  const [queryVector, setQueryVector] = useState<number[] | undefined>(
+    undefined,
+  );
 
   let selectedRelevantCount = 0;
 
@@ -42,18 +45,21 @@ const Hero = () => {
           isRelevant: false, // Set the initial value based on your requirements
         })),
       ]);
+      setQueryVector(data.data.query_vector);
       setErrorMessage(undefined);
     },
   });
 
   const noMoreResults =
-      searchMutation.data?.data.num_found !== undefined &&
-      searchMutation.data?.data.num_found === results.length;
+    searchMutation.data?.data.num_found !== undefined &&
+    searchMutation.data?.data.num_found === results.length;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setResults([]);
-    searchMutation.mutate({ input: input, limit: limit, offset: offset });
+    setOffset(0);
+    setQueryVector(undefined);
+    searchMutation.mutate({ input: input, limit: limit, offset: 0 });
   };
 
   const handleLoadMore = () => {
@@ -61,11 +67,11 @@ const Hero = () => {
       input: input,
       limit: limit,
       offset: offset + limit,
+      vector: queryVector,
     });
 
     setOffset((prev) => prev + limit);
   };
-
 
   const handleRelevanceSubmit = () => {
     // Print the count to the console
@@ -79,49 +85,46 @@ const Hero = () => {
     const beta = 0.75;
     const gamma = 0.15;
 
-    // Call textToEmbedding and use 'then' to handle the asynchronous result
-    fetch('/api/text-to-embedding', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text: input }),
-    })
-        .then((response) => response.json())
-        .then((queryVector) => {
-      // Use rocchio algorithm to update the query vector
-      relevantDocs.forEach((doc) => {
-        queryVector = queryVector.map((value: number, idx: number) => {
-          return value + alpha * (doc.university_vector[idx - 1] as number);
-        });
+    let newQueryVector = searchMutation.data?.data.query_vector ?? [];
+
+    // Use rocchio algorithm to update the query vector
+    relevantDocs.forEach((doc) => {
+      newQueryVector = newQueryVector.map((value: number, idx: number) => {
+        return value + alpha * (doc.university_vector[idx - 1] ?? 0);
       });
+    });
 
-      nonRelevantDocs.forEach((doc) => {
-        queryVector = queryVector.map((value: number, idx: number) => {
-          return value - beta * (doc.university_vector[idx - 1] as number);
-        });
+    nonRelevantDocs.forEach((doc) => {
+      newQueryVector = newQueryVector.map((value: number, idx: number) => {
+        return value - beta * (doc.university_vector[idx - 1] ?? 0);
       });
+    });
 
-      results.forEach((doc) => {
-        queryVector = queryVector.map((value: number, idx: number) => {
-          return value - gamma * (doc.university_vector[idx - 1] as number);
-        });
+    results.forEach((doc) => {
+      newQueryVector = newQueryVector.map((value: number, idx: number) => {
+        return value - gamma * (doc.university_vector[idx - 1] ?? 0);
       });
+    });
 
-      // Normalize the query vector
-      const norm = Math.sqrt(queryVector.reduce((acc: number, val: number) => acc + val ** 2, 0));
-      queryVector = queryVector.map((value: number) => value / norm);
+    // Normalize the query vector
+    const norm = Math.sqrt(
+      newQueryVector.reduce((acc: number, val: number) => acc + val ** 2, 0),
+    );
+    newQueryVector = newQueryVector.map((value: number) => value / norm);
 
-      console.log("Updated Query Vector: ", queryVector);
+    console.log("Updated Query Vector: ", newQueryVector);
 
-      // Perform a new search with the updated query vector
-      // performSearch(queryVector);
-    }).catch((error) => {
-      // Handle errors from textToEmbedding here
-      console.error("Error in textToEmbedding:", error);
+    setResults([]);
+    setOffset(0);
+    setQueryVector(newQueryVector);
+
+    searchMutation.mutate({
+      input: input,
+      limit: limit,
+      offset: offset,
+      vector: newQueryVector,
     });
   };
-
 
   const handleRelevanceChange = (id: string, isRelevant: boolean) => {
     selectedRelevantCount += isRelevant ? 1 : -1;
@@ -208,19 +211,24 @@ const Hero = () => {
                 <p className="text-center">No results found</p>
               )}
 
-
-              <div className="relative flex top-0 left-0 z-30 ">
+              <div className="relative left-0 top-0 z-30 flex ">
                 <button
-                    type="button"
-                    onClick={handleRelevanceSubmit}
-                    className="rounded bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
+                  type="button"
+                  onClick={handleRelevanceSubmit}
+                  className="rounded bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
                 >
-                  Submit Relevance
+                  Submit Relevance - {selectedRelevantCount}/{results.length}
                 </button>
               </div>
 
               {results.map((x, idx) => {
-                return <SearchResultCard key={idx} university={x} onRelevanceChange={handleRelevanceChange} />;
+                return (
+                  <SearchResultCard
+                    key={idx}
+                    university={x}
+                    onRelevanceChange={handleRelevanceChange}
+                  />
+                );
               })}
             </div>
 

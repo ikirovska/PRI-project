@@ -54,6 +54,7 @@ type FlaskResponse = {
   results: FlaskUniversityDocument[];
   num_found?: number;
   status: "OK" | "ERROR";
+  query_vector?: number[];
 };
 
 // instanciate Solr connection
@@ -70,13 +71,19 @@ export const universitiesRouter = createTRPCRouter({
         input: z.string().min(1),
         limit: z.number(),
         offset: z.number(),
+        vector: z.array(z.number()).optional(),
       }),
     )
     .mutation(async ({ input }) => {
       try {
-        const queryUrl =
+        let queryUrl =
           backendUrl +
           `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
+
+        if (input.vector) {
+          queryUrl += `&query_vector=[${input.vector.toString()}]`;
+        }
+
         const finalQueryUrl = encodeURI(queryUrl);
 
         console.log("QQ", finalQueryUrl);
