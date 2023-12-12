@@ -35,22 +35,36 @@ type UniversityDocument = {
   wikipedia_text: string;
   city_wikipedia_text: string;
   coordinates: unknown;
+  url: string;
+  university_vector: number[];
 };
 
 export type FlaskUniversityDocument = {
+  id: string;
   institution_name: string;
   url: string;
   wikipedia_text: string;
   country: string;
   highlights: string[];
   city_name: string;
+  isRelevant: boolean;
+  university_vector: number[];
 };
 
 type FlaskResponse = {
   results: FlaskUniversityDocument[];
+  num_found?: number;
   status: "OK" | "ERROR";
+  query_vector?: number[];
 };
 
+// instanciate Solr connection
+/* const solrClient = createClient({
+  core: "universities",
+  port: 8983,
+  path: "localhost",
+});
+ */
 export const universitiesRouter = createTRPCRouter({
   search: publicProcedure
     .input(
@@ -58,13 +72,19 @@ export const universitiesRouter = createTRPCRouter({
         input: z.string().min(1),
         limit: z.number(),
         offset: z.number(),
+        vector: z.array(z.number().or(z.string())).optional(),
       }),
     )
     .mutation(async ({ input }) => {
       try {
-        const queryUrl =
+        let queryUrl =
           backendUrl +
           `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
+
+        if (input.vector) {
+          queryUrl += `&query_vector=${JSON.stringify(input.vector)}`;
+        }
+
         const finalQueryUrl = encodeURI(queryUrl);
 
         console.log("QQ", finalQueryUrl);
@@ -76,6 +96,8 @@ export const universitiesRouter = createTRPCRouter({
         });
 
         const data = (await res.json()) as FlaskResponse;
+
+        console.log("SERVER", typeof data.query_vector);
 
         return {
           data: data,

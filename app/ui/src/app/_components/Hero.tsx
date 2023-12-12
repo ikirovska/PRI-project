@@ -4,8 +4,9 @@ import React, { type FormEvent, useState } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
-import Link from "next/link";
 import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
+import { PulseLoader as Loader } from 'react-spinners';
+import SearchResultCard from "./SearchResultCard";
 
 const Hero = () => {
   const [input, setInput] = useState("");
@@ -13,6 +14,16 @@ const Hero = () => {
   const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [results, setResults] = useState<FlaskUniversityDocument[]>([]);
+  const [queryVector, setQueryVector] = useState<number[] | undefined>(
+    undefined,
+  );
+
+  let pseudoRelevanceFeedback: boolean;
+
+  const selectedRelevantCount = results.reduce((acc, val) => {
+    const found = val.isRelevant ? 1 : 0;
+    return (acc += found);
+  }, 0);
 
   const searchMutation = api.universities.search.useMutation({
     onError: (err) => {
@@ -32,25 +43,141 @@ const Hero = () => {
       }
     },
     onSuccess: (data) => {
-      setResults((prev) => [...prev, ...data.data.results]);
+      setResults((prev) => [
+        ...prev,
+        ...data.data.results.map((result) => ({
+          ...result,
+          isRelevant: false, // Set the initial value based on your requirements
+        })),
+      ]);
+      setQueryVector(data.data.query_vector);
       setErrorMessage(undefined);
+
+      if(pseudoRelevanceFeedback) {
+        // Pseudo Relevance feedback algorithm (N=3)
+        // Make the first 3 results relevant
+        const new_results = results.slice(0, 3).map((result) => ({
+          ...result,
+          isRelevant: true,
+        }));
+
+        const queryVector = relevanceFeedback(new_results);
+
+        setResults([]);
+        setOffset(0);
+        setQueryVector(queryVector);
+
+        searchMutation.mutate({
+          input: input,
+          limit: limit,
+          offset: offset,
+          vector: queryVector,
+        });
+
+        pseudoRelevanceFeedback = false;
+      }
     },
   });
+
+  const noMoreResults =
+    searchMutation.data?.data.num_found !== undefined &&
+    searchMutation.data?.data.num_found === results.length;
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     setResults([]);
-    searchMutation.mutate({ input: input, limit: limit, offset: offset });
+    setOffset(0);
+    setQueryVector(undefined);
+    pseudoRelevanceFeedback = true;
+    searchMutation.mutate({ input: input, limit: limit, offset: 0 });
   };
 
   const handleLoadMore = () => {
+    console.log("TQP", typeof queryVector);
+
     searchMutation.mutate({
       input: input,
       limit: limit,
       offset: offset + limit,
+      vector: queryVector,
     });
 
     setOffset((prev) => prev + limit);
+  };
+
+  function relevanceFeedback(results_to_filter: FlaskUniversityDocument[]) {
+    // Relevance feedback algorithm
+    // Filter out the relevant and non-relevant documents
+    const relevantDocs = results_to_filter.filter((result) => result.isRelevant);
+    const nonRelevantDocs = results_to_filter.filter((result) => !result.isRelevant);
+
+    const alpha = 1.0;
+    const beta = 0.75;
+    const gamma = 0.15;
+
+    let newQueryVector = searchMutation.data?.data.query_vector ?? [];
+
+    // Use Rocchio algorithm to update the query vector
+    relevantDocs.forEach((doc) => {
+      console.log("DOC", doc);
+      newQueryVector = newQueryVector.map((value: number, idx: number) => {
+        return value + alpha * (doc.university_vector[idx] ?? 0);
+      });
+    });
+
+    nonRelevantDocs.forEach((doc) => {
+      newQueryVector = newQueryVector.map((value: number, idx: number) => {
+        return value - beta * (doc.university_vector[idx] ?? 0);
+      });
+    });
+
+    results.forEach((doc) => {
+      newQueryVector = newQueryVector.map((value: number, idx: number) => {
+        return value - gamma * (doc.university_vector[idx] ?? 0);
+      });
+    });
+
+    // Normalize the query vector
+    const norm = Math.sqrt(
+        newQueryVector.reduce((acc: number, val: number) => acc + val ** 2, 0),
+    );
+    newQueryVector = newQueryVector.map((value: number) => value / norm);
+
+    console.log("Updated Query Vector: ", newQueryVector);
+
+    return newQueryVector;
+  }
+
+  const handleRelevanceSubmit = () => {
+    // Print the count to the console
+    console.log("Selected Relevant Count: ", selectedRelevantCount);
+
+    const newQueryVector = relevanceFeedback(results);
+
+    setResults([]);
+    setOffset(0);
+    setQueryVector(newQueryVector);
+
+    searchMutation.mutate({
+      input: input,
+      limit: limit,
+      offset: offset,
+      vector: newQueryVector,
+    });
+  };
+
+  const handleRelevanceChange = (id: string) => {
+    const newResults = results.map((x) => {
+      if (x.id === id) {
+        return {
+          ...x,
+          isRelevant: !x.isRelevant,
+        };
+      }
+      return x;
+    });
+
+    setResults(newResults);
   };
 
   return (
@@ -113,12 +240,23 @@ const Hero = () => {
             </span>
           </div>
         </form>
-        {}
 
         {(searchMutation.isSuccess ||
           searchMutation.isError ||
           searchMutation.isLoading) && (
           <div className="min-h-[300px] w-full rounded border border-gray-400 bg-gray-700/70 p-4">
+            <div className="mb-6 flex w-full justify-between">
+              <h2 className="text-xl font-medium">Results</h2>
+
+              <button
+                type="button"
+                onClick={handleRelevanceSubmit}
+                className="rounded bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
+              >
+                Submit Relevance - {selectedRelevantCount}/{results.length}
+              </button>
+            </div>
+
             {errorMessage && (
               <div className="mx-auto w-full max-w-md">
                 <ErrorMessage
@@ -130,48 +268,44 @@ const Hero = () => {
 
             <div className="flex w-full flex-col gap-4">
               {searchMutation.isSuccess && results.length === 0 && (
-                <p>No results found</p>
+                <p className="text-center">No results found</p>
               )}
 
               {results.map((x, idx) => {
                 return (
-                  <div
-                    key={`uni-${idx}`}
-                    className="flex w-full flex-col gap-3 rounded-lg border p-4"
-                  >
-                    <p className="font-bold">{x.institution_name}</p>
-                    <p>{x.wikipedia_text}</p>
-
-                    {x.highlights?.map((x, idx) => {
-                      return (
-                        <div
-                          key={`highlight-${idx}`}
-                          dangerouslySetInnerHTML={{ __html: x }}
-                        ></div>
-                      );
-                    })}
-
-                    <Link
-                      className="w-fit rounded border bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
-                      href={x.url ?? "#"}
-                      target="_blank"
-                    >
-                      Open
-                    </Link>
-                  </div>
+                  <SearchResultCard
+                    key={idx}
+                    university={x}
+                    isRelevant={x.isRelevant}
+                    onRelevanceChange={handleRelevanceChange}
+                  />
                 );
               })}
             </div>
 
-            {searchMutation.isLoading && <p>Loading...</p>}
+            {searchMutation.isLoading && (
+              <div className="mx-auto my-12 w-fit">
+                <Loader color="white" />
+              </div>
+            )}
 
-            <button
-              type="button"
-              onClick={handleLoadMore}
-              className="mx-auto rounded bg-purple-700 px-8 py-3 text-white hover:bg-purple-800"
-            >
-              Load more results
-            </button>
+            {searchMutation.isSuccess &&
+              !(searchMutation.isSuccess && results.length === 0) &&
+              !noMoreResults && (
+                <div className="mt-12 flex w-full justify-center">
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    className="mx-auto rounded bg-purple-700 px-8 py-3 text-white hover:bg-purple-800"
+                  >
+                    Load more results
+                  </button>
+                </div>
+              )}
+
+            {searchMutation.isSuccess && noMoreResults && (
+              <p className="text-center">No more results.</p>
+            )}
           </div>
         )}
       </div>

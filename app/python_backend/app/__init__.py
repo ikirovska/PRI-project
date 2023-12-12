@@ -4,16 +4,15 @@ from flask import Flask, jsonify, request, make_response
 from sentence_transformers import SentenceTransformer
 import requests
 import os
+import json
 
 app = Flask(__name__)
 
 def text_to_embedding(text):
     model = SentenceTransformer('all-MiniLM-L6-v2')
     embedding = model.encode(text, convert_to_tensor=False).tolist()
-    
-    # Convert the embedding to the expected format
-    embedding_str = "[" + ",".join(map(str, embedding)) + "]"
-    return embedding_str
+
+    return embedding
 
 def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset):
     url = f"{endpoint}/{collection}/select"
@@ -22,7 +21,7 @@ def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset)
         "q": query,
         #"rq": "{!rerank reRankQuery=$rqq reRankDocs=" + limit + " reRankWeight=1}", // makes results worse
         "rqq": f"{{!knn f=university_vector topK=10}}{embedding}",
-        "fl": "institution_name,wikipedia_text,city_name,country,id,url",
+        "fl": "institution_name,wikipedia_text,city_name,country,id,url,university_vector",
         "start": offset,
         "rows": limit,
         "wt": "json",
@@ -55,17 +54,26 @@ def create_solr_query_from_text(text):
 
     return query
 
-def query_solr(search_text, limit, offset):
+def query_solr(search_text, limit, offset, query_vector):
     solr_endpoint = (os.environ["SOLR_DOCKER_URL"] or "http://localhost:8983") + "/solr"
     collection = "universities"
     
-    embedding = text_to_embedding(search_text)
+    embedding = []
+    
+    if(query_vector != None):
+        embedding = query_vector
+    else:
+        # Convert the embedding to the expected format
+        embedding = text_to_embedding(search_text)
+        
+    embedding_str = "[" + ",".join(map(str, embedding)) + "]"
+        
     query = create_solr_query_from_text(search_text)
     
     print("QUERY", query)
 
     try:
-        results = create_solr_knn_query(solr_endpoint, collection, embedding, query, limit, offset)
+        results = create_solr_knn_query(solr_endpoint, collection, embedding_str, query, limit, offset)
         docs = results.get("response", {}).get("docs", [])
         highlights = results.get("highlighting", [])
         
@@ -80,17 +88,21 @@ def query_solr(search_text, limit, offset):
             found_highlight = found_highlight or []
             
             temp_docs.append({
+                "id": doc.get("id"),
                 "institution_name": doc.get("institution_name"),
                 "country": doc.get("country"), 
                 "wikipedia_text": doc.get("wikipedia_text")[:300] + "...", 
                 "city_name": doc.get("city_name")[0], 
                 "url": doc.get("url"),
-                "highlights": found_highlight
+                "highlights": found_highlight,
+                "university_vector": doc.get("university_vector"),
             })
         
         return {
             "status": "OK",
-            "results": temp_docs
+            "num_found": results.get("response", {}).get("numFound"),
+            "results": temp_docs,
+            "query_vector": embedding
         }
     except requests.HTTPError as e:
         print(f"Error {e.response.status_code}: {e.response.text}")
@@ -106,11 +118,16 @@ def search_solr():
     search_query = args.get("search")
     limit = args.get("limit") or 10
     offset = args.get("offset") or 0
+    query_vector = args.get("query_vector", None) or None
+    
+    # Transform JSONified array from string to actual array
+    if(query_vector != None):
+        query_vector = json.loads(query_vector)
     
     if(search_query == None):
         return make_response(jsonify({"message":"MISSING_PARAMETERS"}), status=400)
     
-    result = query_solr(search_text=search_query, limit=limit, offset=offset) 
+    result = query_solr(search_text=search_query, limit=limit, offset=offset, query_vector=query_vector) 
     
     if(result.get("status") == "ERROR"):
         res_data = jsonify(result)
