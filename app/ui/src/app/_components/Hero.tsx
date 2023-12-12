@@ -214,7 +214,17 @@ const Hero = () => {
           searchMutation.isError ||
           searchMutation.isLoading) && (
           <div className="min-h-[300px] w-full rounded border border-gray-400 bg-gray-700/70 p-4">
-            <h2 className="mb-6 text-xl font-medium">Results</h2>
+            <div className="mb-6 flex w-full justify-between">
+              <h2 className="text-xl font-medium">Results</h2>
+
+              <button
+                type="button"
+                onClick={handleRelevanceSubmit}
+                className="rounded bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
+              >
+                Submit Relevance - {selectedRelevantCount}/{results.length}
+              </button>
+            </div>
 
             {errorMessage && (
               <div className="mx-auto w-full max-w-md">
@@ -229,16 +239,6 @@ const Hero = () => {
               {searchMutation.isSuccess && results.length === 0 && (
                 <p className="text-center">No results found</p>
               )}
-
-              <div className="relative left-0 top-0 z-30 flex ">
-                <button
-                  type="button"
-                  onClick={handleRelevanceSubmit}
-                  className="rounded bg-purple-700 px-4 py-2 text-white hover:bg-purple-800"
-                >
-                  Submit Relevance - {selectedRelevantCount}/{results.length}
-                </button>
-              </div>
 
               {results.map((x, idx) => {
                 return (
