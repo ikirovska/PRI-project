@@ -5,7 +5,7 @@ import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
 import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
-import { PulseLoader as Loader } from "react-spinners";
+import { PulseLoader as Loader } from 'react-spinners';
 import SearchResultCard from "./SearchResultCard";
 
 const Hero = () => {
@@ -17,6 +17,8 @@ const Hero = () => {
   const [queryVector, setQueryVector] = useState<number[] | undefined>(
     undefined,
   );
+
+  let pseudoRelevanceFeedback: boolean;
 
   const selectedRelevantCount = results.reduce((acc, val) => {
     const found = val.isRelevant ? 1 : 0;
@@ -50,6 +52,30 @@ const Hero = () => {
       ]);
       setQueryVector(data.data.query_vector);
       setErrorMessage(undefined);
+
+      if(pseudoRelevanceFeedback) {
+        // Pseudo Relevance feedback algorithm (N=3)
+        // Make the first 3 results relevant
+        const new_results = results.slice(0, 3).map((result) => ({
+          ...result,
+          isRelevant: true,
+        }));
+
+        const queryVector = relevanceFeedback(new_results);
+
+        setResults([]);
+        setOffset(0);
+        setQueryVector(queryVector);
+
+        searchMutation.mutate({
+          input: input,
+          limit: limit,
+          offset: offset,
+          vector: queryVector,
+        });
+
+        pseudoRelevanceFeedback = false;
+      }
     },
   });
 
@@ -62,6 +88,7 @@ const Hero = () => {
     setResults([]);
     setOffset(0);
     setQueryVector(undefined);
+    pseudoRelevanceFeedback = true;
     searchMutation.mutate({ input: input, limit: limit, offset: 0 });
   };
 
@@ -78,16 +105,11 @@ const Hero = () => {
     setOffset((prev) => prev + limit);
   };
 
-  const handleRelevanceSubmit = () => {
-    // Print the count to the console
-    console.log("Selected Relevant Count: ", selectedRelevantCount);
-
+  function relevanceFeedback(results_to_filter: FlaskUniversityDocument[]) {
+    // Relevance feedback algorithm
     // Filter out the relevant and non-relevant documents
-    const relevantDocs = results.filter((result) => result.isRelevant);
-    const nonRelevantDocs = results.filter((result) => !result.isRelevant);
-
-    console.log("DOC", relevantDocs);
-    console.log("NDOC", nonRelevantDocs);
+    const relevantDocs = results_to_filter.filter((result) => result.isRelevant);
+    const nonRelevantDocs = results_to_filter.filter((result) => !result.isRelevant);
 
     const alpha = 1.0;
     const beta = 0.75;
@@ -95,7 +117,7 @@ const Hero = () => {
 
     let newQueryVector = searchMutation.data?.data.query_vector ?? [];
 
-    // Use rocchio algorithm to update the query vector
+    // Use Rocchio algorithm to update the query vector
     relevantDocs.forEach((doc) => {
       console.log("DOC", doc);
       newQueryVector = newQueryVector.map((value: number, idx: number) => {
@@ -117,11 +139,20 @@ const Hero = () => {
 
     // Normalize the query vector
     const norm = Math.sqrt(
-      newQueryVector.reduce((acc: number, val: number) => acc + val ** 2, 0),
+        newQueryVector.reduce((acc: number, val: number) => acc + val ** 2, 0),
     );
     newQueryVector = newQueryVector.map((value: number) => value / norm);
 
     console.log("Updated Query Vector: ", newQueryVector);
+
+    return newQueryVector;
+  }
+
+  const handleRelevanceSubmit = () => {
+    // Print the count to the console
+    console.log("Selected Relevant Count: ", selectedRelevantCount);
+
+    const newQueryVector = relevanceFeedback(results);
 
     setResults([]);
     setOffset(0);
