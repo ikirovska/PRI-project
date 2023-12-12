@@ -71,7 +71,7 @@ export const universitiesRouter = createTRPCRouter({
         input: z.string().min(1),
         limit: z.number(),
         offset: z.number(),
-        vector: z.array(z.number()).optional(),
+        vector: z.array(z.number().or(z.string())).optional(),
       }),
     )
     .mutation(async ({ input }) => {
@@ -81,7 +81,7 @@ export const universitiesRouter = createTRPCRouter({
           `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
 
         if (input.vector) {
-          queryUrl += `&query_vector=[${input.vector.toString()}]`;
+          queryUrl += `&query_vector=${JSON.stringify(input.vector)}`;
         }
 
         const finalQueryUrl = encodeURI(queryUrl);
@@ -95,6 +95,8 @@ export const universitiesRouter = createTRPCRouter({
         });
 
         const data = (await res.json()) as FlaskResponse;
+
+        console.log("SERVER", typeof data.query_vector);
 
         return {
           data: data,

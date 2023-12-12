@@ -4,16 +4,15 @@ from flask import Flask, jsonify, request, make_response
 from sentence_transformers import SentenceTransformer
 import requests
 import os
+import json
 
 app = Flask(__name__)
 
 def text_to_embedding(text):
     model = SentenceTransformer('all-MiniLM-L6-v2')
     embedding = model.encode(text, convert_to_tensor=False).tolist()
-    
-    # Convert the embedding to the expected format
-    embedding_str = "[" + ",".join(map(str, embedding)) + "]"
-    return embedding_str
+
+    return embedding
 
 def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset):
     url = f"{endpoint}/{collection}/select"
@@ -64,14 +63,17 @@ def query_solr(search_text, limit, offset, query_vector):
     if(query_vector != None):
         embedding = query_vector
     else:
+        # Convert the embedding to the expected format
         embedding = text_to_embedding(search_text)
+        
+    embedding_str = "[" + ",".join(map(str, embedding)) + "]"
         
     query = create_solr_query_from_text(search_text)
     
     print("QUERY", query)
 
     try:
-        results = create_solr_knn_query(solr_endpoint, collection, embedding, query, limit, offset)
+        results = create_solr_knn_query(solr_endpoint, collection, embedding_str, query, limit, offset)
         docs = results.get("response", {}).get("docs", [])
         highlights = results.get("highlighting", [])
         
@@ -86,6 +88,7 @@ def query_solr(search_text, limit, offset, query_vector):
             found_highlight = found_highlight or []
             
             temp_docs.append({
+                "id": doc.get("id"),
                 "institution_name": doc.get("institution_name"),
                 "country": doc.get("country"), 
                 "wikipedia_text": doc.get("wikipedia_text")[:300] + "...", 
@@ -116,6 +119,10 @@ def search_solr():
     limit = args.get("limit") or 10
     offset = args.get("offset") or 0
     query_vector = args.get("query_vector", None) or None
+    
+    # Transform JSONified array from string to actual array
+    if(query_vector != None):
+        query_vector = json.loads(query_vector)
     
     if(search_query == None):
         return make_response(jsonify({"message":"MISSING_PARAMETERS"}), status=400)

@@ -63,6 +63,8 @@ const Hero = () => {
   };
 
   const handleLoadMore = () => {
+    console.log("TQP", typeof queryVector);
+
     searchMutation.mutate({
       input: input,
       limit: limit,
