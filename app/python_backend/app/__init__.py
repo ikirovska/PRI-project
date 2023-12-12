@@ -7,6 +7,7 @@ import os
 
 app = Flask(__name__)
 
+
 def text_to_embedding(text):
     model = SentenceTransformer('all-MiniLM-L6-v2')
     embedding = model.encode(text, convert_to_tensor=False).tolist()
@@ -85,7 +86,8 @@ def query_solr(search_text, limit, offset):
                 "wikipedia_text": doc.get("wikipedia_text")[:300] + "...", 
                 "city_name": doc.get("city_name")[0], 
                 "url": doc.get("url"),
-                "highlights": found_highlight
+                "highlights": found_highlight,
+                "university_vector": doc.get("university_vector"),
             })
         
         return {
@@ -118,6 +120,15 @@ def search_solr():
         return make_response(res_data, 400)
 
     return jsonify(result)
+
+@app.route('/text-to-embedding', methods=["GET"])
+def text_to_embedding(text):
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    embedding = model.encode(text, convert_to_tensor=False).tolist()
+
+    # Convert the embedding to the expected format
+    embedding_str = "[" + ",".join(map(str, embedding)) + "]"
+    return embedding_str
 
 ########################################################
 

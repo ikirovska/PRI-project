@@ -36,6 +36,7 @@ type UniversityDocument = {
   city_wikipedia_text: string;
   coordinates: unknown;
   url: string;
+  university_vector: number[];
 };
 
 export type FlaskUniversityDocument = {
@@ -46,6 +47,7 @@ export type FlaskUniversityDocument = {
   highlights: string[];
   city_name: string;
   isRelevant: boolean;
+  university_vector: number[];
 };
 
 type FlaskResponse = {
@@ -95,46 +97,4 @@ export const universitiesRouter = createTRPCRouter({
         throw new Error("SOLR_NOT_RUNNING");
       }
     }),
-
-  // ! THIS IS NOT LOCAL
-  /*   updateRelevance: publicProcedure
-    .input(
-      z.object({
-        universityId: z.string(),
-        isRelevant: z.boolean(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      try {
-        // Query Solr to get the university document
-        const solrQuery = solrClient.query().q(`id:${input.universityId}`);
-        const [university] =
-          await solrClient.search<UniversityDocument>(solrQuery);
-
-        if (!university) {
-          throw new Error(
-            `University with ID ${input.universityId} not found.`,
-          );
-        }
-
-        // Update the relevance field
-        const updatedUniversity = {
-          ...university,
-          relevance: input.isRelevant
-            ? (university.relevance || 0) + 1
-            : university.relevance,
-        };
-
-        // Update the document in Solr
-        await solrClient.update(updatedUniversity);
-
-        // Confirm the changes in Solr
-        await solrClient.commit();
-
-        return { success: true };
-      } catch (err) {
-        console.error("Error updating relevance in Solr:", err);
-        throw new Error("SOLR_UPDATE_ERROR");
-      }
-    }), */
 });

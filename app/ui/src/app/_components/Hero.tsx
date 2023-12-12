@@ -1,11 +1,11 @@
 "use client";
 
-import React, {type FormEvent, useEffect, useState} from "react";
+import React, {type FormEvent, useState} from "react";
 import Image from "next/image";
-import { api } from "~/trpc/react";
+import {api} from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
-import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
-import { PulseLoader as Loader } from "react-spinners";
+import type {FlaskUniversityDocument} from "~/server/api/routers/universities";
+import {PulseLoader as Loader} from "react-spinners";
 import SearchResultCard from "./SearchResultCard";
 
 const Hero = () => {
@@ -14,6 +14,7 @@ const Hero = () => {
   const [limit] = useState(10);
   const [offset, setOffset] = useState(0);
   const [results, setResults] = useState<FlaskUniversityDocument[]>([]);
+
   let selectedRelevantCount = 0;
 
   const searchMutation = api.universities.search.useMutation({
@@ -65,10 +66,62 @@ const Hero = () => {
     setOffset((prev) => prev + limit);
   };
 
+
   const handleRelevanceSubmit = () => {
     // Print the count to the console
-    console.log("Selected Relevant Count: ",selectedRelevantCount);
+    console.log("Selected Relevant Count: ", selectedRelevantCount);
+
+    // Filter out the relevant and non-relevant documents
+    const relevantDocs = results.filter((result) => result.isRelevant);
+    const nonRelevantDocs = results.filter((result) => !result.isRelevant);
+
+    const alpha = 1.0;
+    const beta = 0.75;
+    const gamma = 0.15;
+
+    // Call textToEmbedding and use 'then' to handle the asynchronous result
+    fetch('/api/text-to-embedding', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text: input }),
+    })
+        .then((response) => response.json())
+        .then((queryVector) => {
+      // Use rocchio algorithm to update the query vector
+      relevantDocs.forEach((doc) => {
+        queryVector = queryVector.map((value: number, idx: number) => {
+          return value + alpha * (doc.university_vector[idx - 1] as number);
+        });
+      });
+
+      nonRelevantDocs.forEach((doc) => {
+        queryVector = queryVector.map((value: number, idx: number) => {
+          return value - beta * (doc.university_vector[idx - 1] as number);
+        });
+      });
+
+      results.forEach((doc) => {
+        queryVector = queryVector.map((value: number, idx: number) => {
+          return value - gamma * (doc.university_vector[idx - 1] as number);
+        });
+      });
+
+      // Normalize the query vector
+      const norm = Math.sqrt(queryVector.reduce((acc: number, val: number) => acc + val ** 2, 0));
+      queryVector = queryVector.map((value: number) => value / norm);
+
+      console.log("Updated Query Vector: ", queryVector);
+
+      // Perform a new search with the updated query vector
+      // performSearch(queryVector);
+    }).catch((error) => {
+      // Handle errors from textToEmbedding here
+      console.error("Error in textToEmbedding:", error);
+    });
   };
+
 
   const handleRelevanceChange = (id: string, isRelevant: boolean) => {
     selectedRelevantCount += isRelevant ? 1 : -1;
