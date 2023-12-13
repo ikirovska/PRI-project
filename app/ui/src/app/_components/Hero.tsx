@@ -20,6 +20,14 @@ const Hero = () => {
 
   let pseudoRelevanceFeedback: boolean;
 
+  const ageFilterOptions = ["historic", "mature", "established", "young", "new"];
+  const [selectedAges, setSelectedAges] = useState<string[]>([]);
+  const sizeFilterOptions = ["small", "medium", "large"];
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const rankFilterOptions = ["<250", "250-500", ">500"];
+  const [selectedRankFilter, setSelectedRankFilter] = useState<string | null>(null);
+
+
   const selectedRelevantCount = results.reduce((acc, val) => {
     const found = val.isRelevant ? 1 : 0;
     return (acc += found);
@@ -180,8 +188,6 @@ const Hero = () => {
     setResults(newResults);
   };
 
-  const ageFilterOptions = ["historic", "mature", "established", "young", "new"];
-  const [selectedAges, setSelectedAges] = useState<string[]>([]);
 
   const handleAgeFilterToggle = (ageType: string) => {
     const isSelected = selectedAges.includes(ageType);
@@ -192,9 +198,6 @@ const Hero = () => {
     }
   };
 
-  // Size Filter
-  const sizeFilterOptions = ["small", "medium", "large"];
-  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
 
   const handleSizeFilterToggle = (sizeType: string) => {
     const isSelected = selectedSizes.includes(sizeType);
@@ -205,25 +208,56 @@ const Hero = () => {
     }
   };
 
-  const filteredResults = useMemo(() => {
-    let sizeFilteredResults = results;
 
-    // Apply size filter
+  const handleRankFilterChange = (rankType: string) => {
+    setSelectedRankFilter(rankType === selectedRankFilter ? null : rankType);
+  };
+
+
+  const filteredResults = useMemo(() => {
+    let rankFilteredResults = results;
+
+    // Apply rank filter
+    if (selectedRankFilter) {
+      let minRank: number | undefined;
+      let maxRank: number | undefined;
+
+      if (selectedRankFilter === "<250") {
+          minRank = 0;
+          maxRank = 250;
+      } else if (selectedRankFilter === "250-500") {
+          minRank = 250;
+          maxRank = 500;
+      } else if (selectedRankFilter === ">500") {
+          minRank = 500;
+          maxRank = 10000;
+      }
+
+      console.log(results)
+
+      rankFilteredResults = rankFilteredResults.filter((result) =>
+          minRank && maxRank
+              ? result.rank_2024 > minRank && result.rank_2024 <= maxRank
+              : true
+      );
+    }
+
+    // Apply other filters (age, size)
     if (selectedSizes.length > 0) {
-      sizeFilteredResults = sizeFilteredResults.filter((result) =>
+      rankFilteredResults = rankFilteredResults.filter((result) =>
           selectedSizes.includes(result.size)
       );
     }
 
-    // Apply age filter
     if (selectedAges.length > 0) {
-      sizeFilteredResults = sizeFilteredResults.filter((result) =>
+      rankFilteredResults = rankFilteredResults.filter((result) =>
           selectedAges.includes(result.age)
       );
     }
 
-    return sizeFilteredResults;
-  }, [results, selectedAges, selectedSizes]);
+    return rankFilteredResults;
+  }, [results, selectedAges, selectedSizes, selectedRankFilter]);
+
 
   return (
       <>
@@ -318,6 +352,27 @@ const Hero = () => {
                   </div>
               ))}
             </div>)}
+
+            {/* Rank Filter */}
+            {searchMutation.isSuccess && (
+                <div className="mt-4 flex items-center gap-4">
+                  <label className="text-sm font-bold text-white">Filter by Rank:</label>
+                  {rankFilterOptions.map((rankType) => (
+                      <div key={rankType} className="flex items-center gap-2">
+                        <input
+                            type="radio"
+                            id={`rank-${rankType}`}
+                            checked={rankType === selectedRankFilter}
+                            onChange={() => handleRankFilterChange(rankType)}
+                            className="h-4 w-4 text-purple-700"
+                        />
+                        <label htmlFor={`rank-${rankType}`} className="text-sm text-white">
+                          {rankType}
+                        </label>
+                      </div>
+                  ))}
+                </div>
+            )}
           </form>
 
           {(searchMutation.isSuccess ||

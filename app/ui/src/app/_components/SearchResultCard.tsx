@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import type {FlaskUniversityDocument} from "~/server/api/routers/universities";
 
 
@@ -40,9 +40,9 @@ const SearchResultCard = (props: SearchResultCardProps) => {
     return ageMap[props.university.size] ?? "/size_5.png";
   };
 
-  const getStaticMapImageUrl = (coordinates: string, zoom = 15, size = "300x300") => {
-    return `https://maps.openstreetmap.org/?mlat=${coordinates.split(',')[1]}&mlon=${coordinates.split(',')[0]}#${zoom}/${coordinates.split(',')[1]}/${coordinates.split(',')[0]}`;
-  };
+  //const getStaticMapImageUrl = (coordinates: string, zoom = 15, size = "300x300") => {
+  //  return `https://maps.openstreetmap.org/?mlat=${coordinates.split(',')[1]}&mlon=${coordinates.split(',')[0]}#${zoom}/${coordinates.split(',')[1]}/${coordinates.split(',')[0]}`;
+  //};
 
   const handleOpenClick = () => {
     window.open(props.university.url, "_blank");

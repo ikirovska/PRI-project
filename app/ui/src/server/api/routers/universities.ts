@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 const backendUrl = process.env.BACKEND_DOCKER_URL ?? "http://localhost:5000";
 
 // Define TS University document schema
-// ? Not needed anymore
+/* ? Not needed anymore
 type UniversityDocument = {
   "2024_rank": string;
   "2023_rank": string;
@@ -37,7 +37,7 @@ type UniversityDocument = {
   coordinates: unknown;
   url: string;
   university_vector: number[];
-};
+};*/
 
 export type FlaskUniversityDocument = {
   id: string;
@@ -52,6 +52,7 @@ export type FlaskUniversityDocument = {
   coordinates: string;
   age: string;
   size: string;
+  rank_2024: number;
 };
 
 type FlaskResponse = {

@@ -21,7 +21,7 @@ def create_solr_knn_query(endpoint, collection, embedding, query, limit, offset)
         "q": query,
         #"rq": "{!rerank reRankQuery=$rqq reRankDocs=" + limit + " reRankWeight=1}", // makes results worse
         "rqq": f"{{!knn f=university_vector topK=10}}{embedding}",
-        "fl": "institution_name,wikipedia_text,city_name,country,id,url,university_vector,coordinates,age,size",
+        "fl": "institution_name,wikipedia_text,city_name,country,id,url,university_vector,coordinates,age,size,2024_rank",
         "start": offset,
         "rows": limit,
         "wt": "json",
@@ -99,6 +99,7 @@ def query_solr(search_text, limit, offset, query_vector):
                 "coordinates": doc.get("coordinates"),
                 "size": doc.get("size"),
                 "age": doc.get("age"),
+                "rank_2024": doc.get("2024_rank")
             })
         
         return {
