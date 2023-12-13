@@ -81,9 +81,10 @@ export const universitiesRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       try {
+        const trimmed_input = input.input.trim();
         let queryUrl =
           backendUrl +
-          `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
+          `/semantic-query?search=${trimmed_input}&limit=${input.limit}&offset=${input.offset}`;
 
         if (input.vector) {
           queryUrl += `&query_vector=${JSON.stringify(input.vector)}`;
