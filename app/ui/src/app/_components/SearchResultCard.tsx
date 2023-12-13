@@ -139,8 +139,6 @@ const SearchResultCard = (props: SearchResultCardProps) => {
                 />
               </div>
             </div>
-
-            <p>2024 Rank: {props.university.rank_2024}</p>
           </div>
 
           <div className="relative h-80 w-full bg-red-200">
