@@ -77,17 +77,26 @@ const Hero = () => {
           isRelevant: true,
         }));
 
-        const queryVector = relevanceFeedback(new_results);
+        const queryWordsToAdd = RocchioAlgorithm(new_results);
+        const sortable: Record<string, number> = Object.entries(queryWordsToAdd)
+          .sort(([, a], [, b]) => a - b)
+          .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+
+        const keys = Object.keys(sortable);
+        const selected = [
+          keys[keys.length - 1],
+          keys[keys.length - 2],
+          keys[keys.length - 3],
+        ];
 
         setResults([]);
         setOffset(0);
-        setQueryVector(queryVector);
 
         searchMutation.mutate({
-          input: input,
+          input:
+            input + " " + selected[0] + " " + selected[1] + " " + selected[2],
           limit: limit,
           offset: offset,
-          vector: queryVector,
         });
 
         pseudoRelevanceFeedback = false;
@@ -118,52 +127,6 @@ const Hero = () => {
 
     setOffset((prev) => prev + limit);
   };
-
-  function relevanceFeedback(results_to_filter: FlaskUniversityDocument[]) {
-    // Relevance feedback algorithm
-    // Filter out the relevant and non-relevant documents
-    const relevantDocs = results_to_filter.filter(
-      (result) => result.isRelevant,
-    );
-    const nonRelevantDocs = results_to_filter.filter(
-      (result) => !result.isRelevant,
-    );
-
-    const alpha = 1.0;
-    const beta = 0.75;
-    const gamma = 0.15;
-
-    let newQueryVector = searchMutation.data?.data.query_vector ?? [];
-
-    [1, 23, 34, 565, 6, 6];
-
-    // Use Rocchio algorithm to update the query vector
-    relevantDocs.forEach((doc) => {
-      newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value + alpha * (doc.university_vector[idx] ?? 0);
-      });
-    });
-
-    nonRelevantDocs.forEach((doc) => {
-      newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value - beta * (doc.university_vector[idx] ?? 0);
-      });
-    });
-
-    results.forEach((doc) => {
-      newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value - gamma * (doc.university_vector[idx] ?? 0);
-      });
-    });
-
-    // Normalize the query vector
-    const norm = Math.sqrt(
-      newQueryVector.reduce((acc: number, val: number) => acc + val ** 2, 0),
-    );
-    newQueryVector = newQueryVector.map((value: number) => value / norm);
-
-    return newQueryVector;
-  }
 
   const handleRelevanceSubmit = () => {
     const queryWordsToAdd = RocchioAlgorithm(results);
