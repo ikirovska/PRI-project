@@ -1053,8 +1053,6 @@ export function RocchioAlgorithm(results: FlaskUniversityDocument[]) {
       }
     });
 
-    console.log("QTTTTTTTTT", query[term]);
-
     if (query[term]) {
       query[term] = (query[term] ?? 0) * (weights[term] ?? 0);
     } else {
