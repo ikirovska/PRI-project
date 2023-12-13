@@ -333,7 +333,7 @@ const Hero = () => {
           )}
 
           {/* Rank Filter */}
-          {searchMutation.isSuccess && (
+          {/* {searchMutation.isSuccess && (
             <div className="mt-4 flex items-center gap-4">
               <label className="text-sm font-bold text-white">
                 Filter by Rank:
@@ -356,7 +356,7 @@ const Hero = () => {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </form>
 
         {(searchMutation.isSuccess ||
