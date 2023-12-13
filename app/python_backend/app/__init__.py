@@ -99,7 +99,6 @@ def query_solr(search_text, limit, offset, query_vector):
                 "coordinates": doc.get("coordinates"),
                 "size": doc.get("size"),
                 "age": doc.get("age"),
-                "rank_2024": doc.get("2024_rank")
             })
         
         return {
