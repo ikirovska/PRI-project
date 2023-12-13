@@ -7,6 +7,7 @@ import ErrorMessage from "./ErrorMessage";
 import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
 import { PulseLoader as Loader } from "react-spinners";
 import SearchResultCard from "./SearchResultCard";
+import { RocchioAlgorithm } from "./rocchio";
 
 const Hero = () => {
   const [input, setInput] = useState("");
@@ -17,8 +18,6 @@ const Hero = () => {
   const [queryVector, setQueryVector] = useState<number[] | undefined>(
     undefined,
   );
-
-  console.log(results);
 
   let pseudoRelevanceFeedback: boolean;
 
@@ -110,8 +109,6 @@ const Hero = () => {
   };
 
   const handleLoadMore = () => {
-    console.log("TQP", typeof queryVector);
-
     searchMutation.mutate({
       input: input,
       limit: limit,
@@ -138,9 +135,10 @@ const Hero = () => {
 
     let newQueryVector = searchMutation.data?.data.query_vector ?? [];
 
+    [1, 23, 34, 565, 6, 6];
+
     // Use Rocchio algorithm to update the query vector
     relevantDocs.forEach((doc) => {
-      console.log("DOC", doc);
       newQueryVector = newQueryVector.map((value: number, idx: number) => {
         return value + alpha * (doc.university_vector[idx] ?? 0);
       });
@@ -164,26 +162,29 @@ const Hero = () => {
     );
     newQueryVector = newQueryVector.map((value: number) => value / norm);
 
-    console.log("Updated Query Vector: ", newQueryVector);
-
     return newQueryVector;
   }
 
   const handleRelevanceSubmit = () => {
-    // Print the count to the console
-    console.log("Selected Relevant Count: ", selectedRelevantCount);
+    const queryWordsToAdd = RocchioAlgorithm(results);
+    const sortable: Record<string, number> = Object.entries(queryWordsToAdd)
+      .sort(([, a], [, b]) => a - b)
+      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 
-    const newQueryVector = relevanceFeedback(results);
+    const keys = Object.keys(sortable);
+    const selected = [
+      keys[keys.length - 1],
+      keys[keys.length - 2],
+      keys[keys.length - 3],
+    ];
 
     setResults([]);
     setOffset(0);
-    setQueryVector(newQueryVector);
 
     searchMutation.mutate({
-      input: input,
+      input: input + " " + selected[0] + " " + selected[1] + " " + selected[2],
       limit: limit,
       offset: offset,
-      vector: newQueryVector,
     });
   };
 
