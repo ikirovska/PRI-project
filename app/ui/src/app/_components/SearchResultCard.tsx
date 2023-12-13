@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import type {FlaskUniversityDocument} from "~/server/api/routers/universities";
 
 
@@ -94,22 +94,11 @@ const SearchResultCard = (props: SearchResultCardProps) => {
             </div>
         )}
 
-        {/* Size and Map Sections Container */}
-        {isExpanded && (
-            <div className="flex gap-4">
-              {/* Size Section */}
-              <div className="flex items-center gap-4 p-5">
-                <label className="text-sm font-bold text-white">Size</label>
-                <img src={getSizeImage() as string} alt={props.university.size} className="h-20 w-20" />
-              </div>
-
-              {/* Map Section */}
-              <div className="flex items-center gap-4 p-5">
+        {/* Map Section<div className="flex items-center gap-4 p-5">
                 <label className="text-sm font-bold text-white">Map</label>
                 <img src={getStaticMapImageUrl(props.university.coordinates || "0,0")} alt="University Map" className="h-40 w-40" />
               </div>
-            </div>
-        )}
+                </div> */ }
       </div>
   );
 };
