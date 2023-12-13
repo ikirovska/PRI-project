@@ -49,6 +49,9 @@ export type FlaskUniversityDocument = {
   city_name: string;
   isRelevant: boolean;
   university_vector: number[];
+  coordinates: string;
+  age: string;
+  size: string;
 };
 
 type FlaskResponse = {

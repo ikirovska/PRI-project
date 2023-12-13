@@ -16,7 +16,10 @@
     "@trpc/next": "^10.43.6",
     "@trpc/react-query": "^10.43.6",
     "@trpc/server": "^10.43.6",
+    "@types/googlemaps": "^3.43.3",
     "autoprefixer": "^10.4.14",
+    "bert-as-service": "^1.0.1",
+    "leaflet": "^1.9.4",
     "next": "^14.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -27,22 +30,25 @@
     "superjson": "^2.2.1",
     "tailwindcss": "^3.3.5",
     "zod": "^3.22.4",
-    "bert-as-service": "^1.0.1"
+    "leaflet-geosearch": "^3.1.0"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.3",
     "@types/eslint": "^8.44.7",
+    "@types/googlemaps": "^3.43.3",
     "@types/node": "^18.17.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
+    "bert-as-service": "^1.0.1",
     "eslint": "^8.54.0",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
     "typescript": "^5.1.6",
-    "bert-as-service": "^1.0.1"
+    "leaflet-geosearch": "^3.1.0",
+    "leaflet": "^1.9.4"
   },
   "ct3aMetadata": {
     "initVersion": "7.24.0"
