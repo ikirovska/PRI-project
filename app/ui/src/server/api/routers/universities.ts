@@ -4,7 +4,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 const backendUrl = process.env.BACKEND_DOCKER_URL ?? "http://localhost:5000";
 
 // Define TS University document schema
-// ? Not needed anymore
+/* ? Not needed anymore
 type UniversityDocument = {
   "2024_rank": string;
   "2023_rank": string;
@@ -37,7 +37,7 @@ type UniversityDocument = {
   coordinates: unknown;
   url: string;
   university_vector: number[];
-};
+};*/
 
 export type FlaskUniversityDocument = {
   id: string;
@@ -49,9 +49,13 @@ export type FlaskUniversityDocument = {
   city_name: string;
   isRelevant: boolean;
   university_vector: number[];
+  coordinates: string;
+  age: string;
+  size: string;
+  rank_2024: number;
 };
 
-type FlaskResponse = {
+export type FlaskResponse = {
   results: FlaskUniversityDocument[];
   num_found?: number;
   status: "OK" | "ERROR";
@@ -77,9 +81,10 @@ export const universitiesRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       try {
+        const trimmed_input = input.input.trim();
         let queryUrl =
           backendUrl +
-          `/semantic-query?search=${input.input}&limit=${input.limit}&offset=${input.offset}`;
+          `/semantic-query?search=${trimmed_input}&limit=${input.limit}&offset=${input.offset}`;
 
         if (input.vector) {
           queryUrl += `&query_vector=${JSON.stringify(input.vector)}`;

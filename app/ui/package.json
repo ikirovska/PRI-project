@@ -10,39 +10,49 @@
     "start": "next start"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.19.2",
     "@t3-oss/env-nextjs": "^0.7.1",
     "@tanstack/react-query": "^4.36.1",
     "@trpc/client": "^10.43.6",
     "@trpc/next": "^10.43.6",
     "@trpc/react-query": "^10.43.6",
     "@trpc/server": "^10.43.6",
+    "@types/googlemaps": "^3.43.3",
     "autoprefixer": "^10.4.14",
+    "bert-as-service": "^1.0.1",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.294.0",
     "next": "^14.0.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-leaflet": "^4.2.1",
     "react-spinners": "^0.13.8",
     "server-only": "^0.0.1",
     "sharp": "^0.33.0",
     "solr-client": "0.10.0-rc10",
     "superjson": "^2.2.1",
     "tailwindcss": "^3.3.5",
-    "zod": "^3.22.4",
-    "bert-as-service": "^1.0.1"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.3",
+    "@react-google-maps/api": "^2.19.2",
     "@types/eslint": "^8.44.7",
+    "@types/googlemaps": "^3.43.3",
+    "@types/leaflet": "^1.9.8",
     "@types/node": "^18.17.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
+    "bert-as-service": "^1.0.1",
     "eslint": "^8.54.0",
+    "leaflet": "^1.9.4",
+    "leaflet-geosearch": "^3.1.0",
     "postcss": "^8.4.31",
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
-    "typescript": "^5.1.6",
-    "bert-as-service": "^1.0.1"
+    "typescript": "^5.1.6"
   },
   "ct3aMetadata": {
     "initVersion": "7.24.0"

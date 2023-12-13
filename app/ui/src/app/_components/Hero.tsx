@@ -1,12 +1,13 @@
 "use client";
 
-import React, { type FormEvent, useState } from "react";
+import React, { type FormEvent, useMemo, useState } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
 import ErrorMessage from "./ErrorMessage";
 import type { FlaskUniversityDocument } from "~/server/api/routers/universities";
-import { PulseLoader as Loader } from 'react-spinners';
+import { PulseLoader as Loader } from "react-spinners";
 import SearchResultCard from "./SearchResultCard";
+import { RocchioAlgorithm } from "./rocchio";
 
 const Hero = () => {
   const [input, setInput] = useState("");
@@ -19,6 +20,21 @@ const Hero = () => {
   );
 
   let pseudoRelevanceFeedback: boolean;
+
+  const ageFilterOptions = [
+    "historic",
+    "mature",
+    "established",
+    "young",
+    "new",
+  ];
+  const [selectedAges, setSelectedAges] = useState<string[]>([]);
+  const sizeFilterOptions = ["small", "medium", "large"];
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const rankFilterOptions = ["<250", "250-500", ">500"];
+  const [selectedRankFilter, setSelectedRankFilter] = useState<string | null>(
+    null,
+  );
 
   const selectedRelevantCount = results.reduce((acc, val) => {
     const found = val.isRelevant ? 1 : 0;
@@ -53,7 +69,7 @@ const Hero = () => {
       setQueryVector(data.data.query_vector);
       setErrorMessage(undefined);
 
-      if(pseudoRelevanceFeedback) {
+      if (pseudoRelevanceFeedback) {
         // Pseudo Relevance feedback algorithm (N=3)
         // Make the first 3 results relevant
         const new_results = results.slice(0, 3).map((result) => ({
@@ -61,17 +77,26 @@ const Hero = () => {
           isRelevant: true,
         }));
 
-        const queryVector = relevanceFeedback(new_results);
+        const queryWordsToAdd = RocchioAlgorithm(new_results);
+        const sortable: Record<string, number> = Object.entries(queryWordsToAdd)
+          .sort(([, a], [, b]) => a - b)
+          .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+
+        const keys = Object.keys(sortable);
+        const selected = [
+          keys[keys.length - 1],
+          keys[keys.length - 2],
+          keys[keys.length - 3],
+        ];
 
         setResults([]);
         setOffset(0);
-        setQueryVector(queryVector);
 
         searchMutation.mutate({
-          input: input,
+          input:
+            input + " " + selected[0] + " " + selected[1] + " " + selected[2],
           limit: limit,
           offset: offset,
-          vector: queryVector,
         });
 
         pseudoRelevanceFeedback = false;
@@ -93,8 +118,6 @@ const Hero = () => {
   };
 
   const handleLoadMore = () => {
-    console.log("TQP", typeof queryVector);
-
     searchMutation.mutate({
       input: input,
       limit: limit,
@@ -105,64 +128,26 @@ const Hero = () => {
     setOffset((prev) => prev + limit);
   };
 
-  function relevanceFeedback(results_to_filter: FlaskUniversityDocument[]) {
-    // Relevance feedback algorithm
-    // Filter out the relevant and non-relevant documents
-    const relevantDocs = results_to_filter.filter((result) => result.isRelevant);
-    const nonRelevantDocs = results_to_filter.filter((result) => !result.isRelevant);
-
-    const alpha = 1.0;
-    const beta = 0.75;
-    const gamma = 0.15;
-
-    let newQueryVector = searchMutation.data?.data.query_vector ?? [];
-
-    // Use Rocchio algorithm to update the query vector
-    relevantDocs.forEach((doc) => {
-      console.log("DOC", doc);
-      newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value + alpha * (doc.university_vector[idx] ?? 0);
-      });
-    });
-
-    nonRelevantDocs.forEach((doc) => {
-      newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value - beta * (doc.university_vector[idx] ?? 0);
-      });
-    });
-
-    results.forEach((doc) => {
-      newQueryVector = newQueryVector.map((value: number, idx: number) => {
-        return value - gamma * (doc.university_vector[idx] ?? 0);
-      });
-    });
-
-    // Normalize the query vector
-    const norm = Math.sqrt(
-        newQueryVector.reduce((acc: number, val: number) => acc + val ** 2, 0),
-    );
-    newQueryVector = newQueryVector.map((value: number) => value / norm);
-
-    console.log("Updated Query Vector: ", newQueryVector);
-
-    return newQueryVector;
-  }
-
   const handleRelevanceSubmit = () => {
-    // Print the count to the console
-    console.log("Selected Relevant Count: ", selectedRelevantCount);
+    const queryWordsToAdd = RocchioAlgorithm(results);
+    const sortable: Record<string, number> = Object.entries(queryWordsToAdd)
+      .sort(([, a], [, b]) => a - b)
+      .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
 
-    const newQueryVector = relevanceFeedback(results);
+    const keys = Object.keys(sortable);
+    const selected = [
+      keys[keys.length - 1],
+      keys[keys.length - 2],
+      keys[keys.length - 3],
+    ];
 
     setResults([]);
     setOffset(0);
-    setQueryVector(newQueryVector);
 
     searchMutation.mutate({
-      input: input,
+      input: input + " " + selected[0] + " " + selected[1] + " " + selected[2],
       limit: limit,
       offset: offset,
-      vector: newQueryVector,
     });
   };
 
@@ -179,6 +164,70 @@ const Hero = () => {
 
     setResults(newResults);
   };
+
+  const handleAgeFilterToggle = (ageType: string) => {
+    const isSelected = selectedAges.includes(ageType);
+    if (isSelected) {
+      setSelectedAges((prev) => prev.filter((age) => age !== ageType));
+    } else {
+      setSelectedAges((prev) => [...prev, ageType]);
+    }
+  };
+
+  const handleSizeFilterToggle = (sizeType: string) => {
+    const isSelected = selectedSizes.includes(sizeType);
+    if (isSelected) {
+      setSelectedSizes((prev) => prev.filter((size) => size !== sizeType));
+    } else {
+      setSelectedSizes((prev) => [...prev, sizeType]);
+    }
+  };
+
+  const handleRankFilterChange = (rankType: string) => {
+    setSelectedRankFilter(rankType === selectedRankFilter ? null : rankType);
+  };
+
+  const filteredResults = useMemo(() => {
+    let rankFilteredResults = results;
+
+    // Apply rank filter
+    if (selectedRankFilter) {
+      let minRank: number | undefined;
+      let maxRank: number | undefined;
+
+      if (selectedRankFilter === "<250") {
+        minRank = 0;
+        maxRank = 250;
+      } else if (selectedRankFilter === "250-500") {
+        minRank = 250;
+        maxRank = 500;
+      } else if (selectedRankFilter === ">500") {
+        minRank = 500;
+        maxRank = 10000;
+      }
+
+      rankFilteredResults = rankFilteredResults.filter((result) =>
+        minRank && maxRank
+          ? result.rank_2024 > minRank && result.rank_2024 <= maxRank
+          : true,
+      );
+    }
+
+    // Apply other filters (age, size)
+    if (selectedSizes.length > 0) {
+      rankFilteredResults = rankFilteredResults.filter((result) =>
+        selectedSizes.includes(result.size),
+      );
+    }
+
+    if (selectedAges.length > 0) {
+      rankFilteredResults = rankFilteredResults.filter((result) =>
+        selectedAges.includes(result.age),
+      );
+    }
+
+    return rankFilteredResults;
+  }, [results, selectedAges, selectedSizes, selectedRankFilter]);
 
   return (
     <>
@@ -239,6 +288,72 @@ const Hero = () => {
               </button>
             </span>
           </div>
+
+          {/* Age Filter */}
+          {searchMutation.isSuccess && (
+            <div className="mt-4 flex items-center gap-4">
+              <label className="text-sm font-bold text-white">
+                Filter by Age:
+              </label>
+              {ageFilterOptions.map((ageType) => (
+                <div key={ageType} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedAges.includes(ageType)}
+                    onChange={() => handleAgeFilterToggle(ageType)}
+                    className="h-4 w-4 text-purple-700"
+                  />
+                  <span className="text-sm text-white">{ageType}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Size Filter */}
+          {searchMutation.isSuccess && (
+            <div className="mt-4 flex items-center gap-4">
+              <label className="text-sm font-bold text-white">
+                Filter by Size:
+              </label>
+              {sizeFilterOptions.map((sizeType) => (
+                <div key={sizeType} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedSizes.includes(sizeType)}
+                    onChange={() => handleSizeFilterToggle(sizeType)}
+                    className="h-4 w-4 text-purple-700"
+                  />
+                  <span className="text-sm text-white">{sizeType}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Rank Filter */}
+          {searchMutation.isSuccess && (
+            <div className="mt-4 flex items-center gap-4">
+              <label className="text-sm font-bold text-white">
+                Filter by Rank:
+              </label>
+              {rankFilterOptions.map((rankType) => (
+                <div key={rankType} className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id={`rank-${rankType}`}
+                    checked={rankType === selectedRankFilter}
+                    onChange={() => handleRankFilterChange(rankType)}
+                    className="h-4 w-4 text-purple-700"
+                  />
+                  <label
+                    htmlFor={`rank-${rankType}`}
+                    className="text-sm text-white"
+                  >
+                    {rankType}
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
         </form>
 
         {(searchMutation.isSuccess ||
@@ -271,16 +386,14 @@ const Hero = () => {
                 <p className="text-center">No results found</p>
               )}
 
-              {results.map((x, idx) => {
-                return (
-                  <SearchResultCard
-                    key={idx}
-                    university={x}
-                    isRelevant={x.isRelevant}
-                    onRelevanceChange={handleRelevanceChange}
-                  />
-                );
-              })}
+              {filteredResults.map((x, idx) => (
+                <SearchResultCard
+                  key={idx}
+                  university={x}
+                  isRelevant={x.isRelevant}
+                  onRelevanceChange={handleRelevanceChange}
+                />
+              ))}
             </div>
 
             {searchMutation.isLoading && (
