@@ -113,6 +113,9 @@ const Hero = () => {
     setResults([]);
     setOffset(0);
     setQueryVector(undefined);
+    setSelectedAges([]);
+    setSelectedSizes([]);
+    setSelectedRankFilter(null);
     pseudoRelevanceFeedback = true;
     searchMutation.mutate({ input: input, limit: limit, offset: 0 });
   };
