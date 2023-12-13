@@ -55,7 +55,7 @@ export type FlaskUniversityDocument = {
   rank_2024: number;
 };
 
-type FlaskResponse = {
+export type FlaskResponse = {
   results: FlaskUniversityDocument[];
   num_found?: number;
   status: "OK" | "ERROR";
