@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import type {FlaskUniversityDocument} from "~/server/api/routers/universities";
 
 
+
 type SearchResultCardProps = {
   university: FlaskUniversityDocument;
   onRelevanceChange: (id: string) => void;
@@ -94,11 +95,7 @@ const SearchResultCard = (props: SearchResultCardProps) => {
             </div>
         )}
 
-        {/* Map Section<div className="flex items-center gap-4 p-5">
-                <label className="text-sm font-bold text-white">Map</label>
-                <img src={getStaticMapImageUrl(props.university.coordinates || "0,0")} alt="University Map" className="h-40 w-40" />
-              </div>
-                </div> */ }
+        {/* Map Section */}
       </div>
   );
 };
